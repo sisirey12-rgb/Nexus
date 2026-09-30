@@ -91,3 +91,19 @@ section{perspective:1400px}
 .swatches button:hover{transform:scale(1.12)}
 .swatches button.on{box-shadow:0 0 0 3px var(--ring,#000),0 0 0 5px var(--accent),0 0 18px var(--glow)}
 .opts button{border-radius:999px}
+
+/* ---- cinematic scene layout (headline bottom-left, index right, caption bottom-right) ---- */
+section{justify-content:flex-end;min-height:100svh;padding-bottom:12vh}
+.hero{align-items:flex-end}
+.hero-card{align-self:flex-start;margin:16vh 210px 0 0}
+h1{font-size:clamp(3rem,10vw,8rem);font-style:italic;text-transform:uppercase;letter-spacing:-.045em}
+h2{font-size:clamp(2rem,6.5vw,5rem);text-transform:uppercase;letter-spacing:-.035em;line-height:.95}
+#sc{position:absolute;top:26px;left:14px}
+.idx{position:fixed;right:30px;top:50%;transform:translateY(-50%);z-index:15;display:flex;flex-direction:column;gap:9px;text-align:right}
+.idx a{color:var(--muted);transition:.3s}.idx a::after{content:' •';opacity:0}
+.idx a.on{color:var(--text)}.idx a.on::after{opacity:1;color:var(--accent)}.idx a:hover{color:var(--accent)}
+.capt{position:fixed;right:30px;bottom:30px;width:min(260px,28vw);z-index:15;color:var(--muted);text-transform:none;letter-spacing:.03em;line-height:1.55}
+.capt b{display:block;color:var(--text);letter-spacing:.14em;margin-bottom:6px;text-transform:uppercase}
+.capt button{all:unset;cursor:pointer;color:var(--accent);margin-top:10px;display:inline-block;text-transform:uppercase;letter-spacing:.14em}
+.capt button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media(max-width:900px){.idx,.capt{display:none}.hero-card{margin:0;align-self:stretch}}
