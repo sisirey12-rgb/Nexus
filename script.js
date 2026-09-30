@@ -46,26 +46,53 @@ $('#chClose').addEventListener('click',()=>dlg.close());dlg.addEventListener('cl
 
 /* 3D tilt */
 $$('[data-tilt]').forEach(c=>{const set=(k,v)=>c.style.setProperty(k,v);
-  c.addEventListener('pointermove',e=>{if(reduceMQ.matches||e.pointerType==='touch')return;const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
-    c.classList.add('hot');set('--ry',(x-.5)*16+'deg');set('--rx',(.5-y)*16+'deg');set('--px',x-.5);set('--py',y-.5);set('--mx',x*100+'%');set('--my',y*100+'%')});
+  ['pointermove','pointerdown'].forEach(ev=>c.addEventListener(ev,e=>{if(reduceMQ.matches)return;const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+    c.classList.add('hot');set('--ry',(x-.5)*16+'deg');set('--rx',(.5-y)*16+'deg');set('--px',x-.5);set('--py',y-.5);set('--mx',x*100+'%');set('--my',y*100+'%')}));
   const off=()=>{c.classList.remove('hot');set('--rx','0deg');set('--ry','0deg');set('--px',0);set('--py',0)};
-  c.addEventListener('pointerleave',off);c.addEventListener('pointercancel',off)});
+  c.addEventListener('pointerleave',off);c.addEventListener('pointerup',off);c.addEventListener('pointercancel',off)});
 
-/* energy beam (canvas 2D) */
-const cv=$('#beam'),g=cv.getContext('2d');let W,H,D,ps=[],mx=0,my=0,sy=0;
-const SPEED={cinematic:.55,smooth:1,default:1.5};
-function size(){D=Math.min(devicePixelRatio||1,innerWidth<768?1:1.5);W=cv.width=innerWidth*D;H=cv.height=innerHeight*D;
-  const n=innerWidth<768?70:170;ps=Array.from({length:n},()=>({o:(Math.random()+Math.random()+Math.random()-1.5)*.22,y:Math.random()*H,v:.4+Math.random()*1.4,r:.6+Math.random()*1.8,p:Math.random()*6.28,k:Math.random()<.3}))}
+/* energy beam: 3D helix + spiral galaxy, rotated by scroll position (fully reversible) */
+const cv=$('#beam'),g=cv.getContext('2d');
+let W,H,D,gal=[],fl=[],mx=0,my=0,sm=0,vs=0,lastY=scrollY,spKey='',spr={},vis=true,bx=0,t0=performance.now();
+const SPEED={cinematic:.55,smooth:1,default:1.5},K={cinematic:.05,smooth:.1,default:.22};
+function mk(c){const s=document.createElement('canvas');s.width=s.height=48;const x=s.getContext('2d'),q=[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)),r=x.createRadialGradient(24,24,0,24,24,24);
+  r.addColorStop(0,'#fff');r.addColorStop(.25,c);r.addColorStop(1,`rgba(${q},0)`);x.fillStyle=r;x.fillRect(0,0,48,48);return s}
+function size(){D=Math.min(devicePixelRatio||1,innerWidth<768?1.25:2);W=cv.width=innerWidth*D;H=cv.height=innerHeight*D;
+  const n=innerWidth<768?600:1600,R=Math.min(W*.6,H*.8);
+  gal=Array.from({length:n},(_,i)=>{const u=Math.pow(Math.random(),.65);return{r:u*R,a:(i%3)*2.094+u*5+(Math.random()-.5)*.5,h:(Math.random()-.5)*R*.07*(1-u*.6),s:.4+Math.random()*1.1,k:Math.random()<.3||u>.6,w:1/Math.sqrt(u+.15)}});
+  fl=Array.from({length:innerWidth<768?60:150},()=>({o:(Math.random()+Math.random()+Math.random()-1.5)*.2,y:Math.random()*H,v:.4+Math.random()*1.4,s:.5+Math.random(),p:Math.random()*6.28,k:Math.random()<.3}))}
 addEventListener('resize',size);size();
 addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5},{passive:true});
-addEventListener('scroll',()=>{sy=scrollY;cv.style.transform=`translateY(${-sy*.12}px)`;cv.style.opacity=Math.max(.3,1-sy/(innerHeight*1.4))},{passive:true});
-let vis=true;document.addEventListener('visibilitychange',()=>vis=!document.hidden);
-let bx=0,t0=performance.now();
-function frame(now){requestAnimationFrame(frame);if(!vis)return;const dt=Math.min(now-t0,50)/16.7;t0=now;const t=now/1000*SPEED[st.motion],still=reduceMQ.matches;
-  const tx=(innerWidth<900?.5:.72)*W+mx*40*D;bx+=(tx-bx)*.05;
-  g.clearRect(0,0,W,H);g.globalCompositeOperation=col.dark?'lighter':'source-over';
-  const path=(w,a,c)=>{g.beginPath();for(let y=-10;y<=H+10;y+=14){const x=bx+Math.sin(y*.008/D+t*1.2)*14*D+Math.sin(y*.02/D-t*2)*5*D;y<0?g.moveTo(x,y):g.lineTo(x,y)}g.lineWidth=w*D;g.globalAlpha=a;g.strokeStyle=c;g.lineCap='round';g.stroke()};
-  const a=col.dark?1:.6;path(150,.05*a,col.b);path(70,.1*a,col.a);path(26,.22*a,col.a);path(8,.75*a,col.dark?'#ffffff':col.b);path(2.5,.95,col.dark?'#ffffff':col.a);
-  ps.forEach((p,i)=>{if(!still)p.y-=p.v*SPEED[st.motion]*D*dt;if(p.y<-10)p.y=H+10;const x=bx+p.o*W*.6+Math.sin(t*1.5+p.p+p.y*.004)*22*D;g.globalAlpha=(.25+.6*Math.abs(Math.sin(t+p.p)))*(col.dark?1:.7);g.fillStyle=p.k?col.b:col.a;g.beginPath();g.arc(x,p.y,p.r*D,0,6.283);g.fill()});
+document.addEventListener('visibilitychange',()=>vis=!document.hidden);
+/* scroll-linked 3D card motion: position + velocity driven, so scrolling up reverses it */
+const cards=$$('.card'),cst=cards.map(()=>({rx:0,ry:0,z:0,a:0}));
+function cardFx(punch,still){const vh=innerHeight,k=K[st.motion]*2+.05,rs=cards.map(c=>c.getBoundingClientRect());
+  cards.forEach((c,i)=>{const r=rs[i],d=Math.max(-1.4,Math.min(1.4,(r.top+r.height/2-vh/2)/vh)),o=cst[i],a=Math.max(0,1-Math.abs(d)*1.3),sg=i%2?1:-1;
+    o.rx+=((still?0:-d*26+vs*.3)-o.rx)*k;o.ry+=((still?0:sg*d*12+vs*.1)-o.ry)*k;o.z+=((still?0:a*40+punch*60)-o.z)*k;o.a+=(a-o.a)*k;
+    const th=Math.hypot(o.rx,o.ry);
+    c.style.rotate=th>.02?`${o.rx.toFixed(3)} ${o.ry.toFixed(3)} 0 ${th.toFixed(2)}deg`:'none';
+    c.style.translate=`0 0 ${o.z.toFixed(1)}px`;c.style.scale=(1+punch*.05*o.a).toFixed(3);c.style.setProperty('--act',o.a.toFixed(3))})}
+function frame(now){requestAnimationFrame(frame);if(!vis)return;
+  const dt=Math.min(now-t0,50)/16.7;t0=now;const still=reduceMQ.matches,sp=SPEED[st.motion],t=now/1000*sp;
+  const max=Math.max(1,document.body.scrollHeight-innerHeight);sm+=(scrollY/max-sm)*K[st.motion];
+  vs+=((scrollY-lastY)-vs)*.12;lastY=scrollY;const punch=Math.min(Math.abs(vs)/50,1);
+  cardFx(punch,still);
+  const key=col.a+col.b+col.dark;if(key!==spKey){spKey=key;spr.a=mk(col.a);spr.b=mk(col.b);spr.w=mk(col.dark?'#ffffff':col.a)}
+  const tx=(innerWidth<900?.5:.72)*W+mx*40*D;bx+=(tx-bx)*.05;const cx=bx,cy=H*.5;
+  const th=sm*Math.PI*5+(still?0:t*.2),pitch=.9+Math.sin(sm*Math.PI*3)*.45+vs*.004,ct=Math.cos(th),st_=Math.sin(th),cp=Math.cos(pitch),sp_=Math.sin(pitch);
+  g.clearRect(0,0,W,H);g.globalCompositeOperation=col.dark?'lighter':'source-over';g.lineCap='round';const al=col.dark?1:.6;
+  /* core beam + helix strands (rotate with scroll) */
+  const path=(w,a,c)=>{g.beginPath();for(let y=-10;y<=H+10;y+=14){const x=cx+Math.sin(y*.008/D+t*1.2)*14*D+Math.sin(y*.02/D-t*2)*5*D;y<0?g.moveTo(x,y):g.lineTo(x,y)}g.lineWidth=w*D;g.globalAlpha=a;g.strokeStyle=c;g.stroke()};
+  path(170,.05*al,col.b);path(80,.1*al,col.a);path(28,.22*al,col.a);path(8,.8*al,col.dark?'#ffffff':col.b);path(2.5,.95,col.dark?'#ffffff':col.a);
+  for(let s=0;s<6;s++){const Rr=(24+s*15)*D*(1+punch*.4),ph=s*1.047;g.beginPath();
+    for(let y=-10;y<=H+10;y+=16){const a=th*1.6+y*.006/D+ph+(still?0:t*.8),X=Rr*Math.cos(a),Z=Rr*Math.sin(a),k=500*D/(500*D+Z),x=cx+X*k;y<0?g.moveTo(x,y):g.lineTo(x,y)}
+    g.lineWidth=(1.2+s*.15)*D;g.globalAlpha=.4*al;g.strokeStyle=s%2?col.b:col.a;g.stroke()}
+  /* spiral galaxy disc around the beam: rotates + pitches with scroll */
+  const F=Math.min(W*.6,H*.8)*1.7;
+  for(const p of gal){const an=p.a+(still?0:t*.35*p.w),X=p.r*Math.cos(an),Y=p.h,Z=p.r*Math.sin(an),X1=X*ct+Z*st_,Z1=-X*st_+Z*ct,Y2=Y*cp-Z1*sp_,Z2=Y*sp_+Z1*cp,k=F/(F+Z2);
+    const sz=p.s*D*3.2*k*(1+punch*.6);g.globalAlpha=Math.min(1,.25+.6*k*k)*al;g.drawImage(p.k?spr.b:spr.a,cx+X1*k*(1+punch*.2)-sz,cy+Y2*k-sz,sz*2,sz*2)}
+  /* vertical plasma stream particles */
+  for(const p of fl){if(!still)p.y-=p.v*sp*D*dt;if(p.y<-10)p.y=H+10;const x=cx+p.o*W*.35+Math.sin(t*1.5+p.p+p.y*.004)*22*D,sz=p.s*4*D;
+    g.globalAlpha=(.3+.6*Math.abs(Math.sin(t+p.p)))*al;g.drawImage(p.k?spr.b:spr.w,x-sz,p.y-sz,sz*2,sz*2)}
   g.globalAlpha=1}
 apply();requestAnimationFrame(frame);
