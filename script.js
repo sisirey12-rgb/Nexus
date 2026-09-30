@@ -69,13 +69,15 @@ addEventListener('pointermove', e => {
   glow.style.transform = `translate(${e.clientX - 180}px,${e.clientY - 180}px)`;
 }, { passive: true });
 $$('[data-tilt]').forEach(c => {
+  const set = (k, v) => c.style.setProperty(k, v);
   c.addEventListener('pointermove', e => {
-    if (st.motion === 'reduced') return;
+    if (st.motion === 'reduced' || e.pointerType === 'touch') return;
     const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-    c.style.transform = `perspective(800px) rotateY(${(x - .5) * 8}deg) rotateX(${(.5 - y) * 8}deg)`;
-    c.style.setProperty('--mx', x * 100 + '%'); c.style.setProperty('--my', y * 100 + '%');
+    c.classList.add('hot'); set('--ry', (x - .5) * 14 + 'deg'); set('--rx', (.5 - y) * 14 + 'deg');
+    set('--px', x - .5); set('--py', y - .5); set('--mx', x * 100 + '%'); set('--my', y * 100 + '%'); set('--sx', x * 100 + '%');
   });
-  c.addEventListener('pointerleave', () => c.style.transform = '');
+  const off = () => { c.classList.remove('hot'); set('--rx', '0deg'); set('--ry', '0deg'); set('--px', 0); set('--py', 0); };
+  c.addEventListener('pointerleave', off); c.addEventListener('pointercancel', off);
 });
 $$('.mag').forEach(b => {
   b.addEventListener('pointermove', e => { if (st.motion === 'reduced') return; const r = b.getBoundingClientRect(); b.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .15}px,${(e.clientY - r.top - r.height / 2) * .25}px)`; });
