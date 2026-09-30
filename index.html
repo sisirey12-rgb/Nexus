@@ -1,40 +1,153 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#02010a">
-<meta name="description" content="VOXX NEXUS — digital technology studio for web, AI, APIs, automation and creative systems.">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>VOXX NEXUS — Digital Technology Studio</title>
-<meta property="og:title" content="VOXX NEXUS — Digital Technology Studio"><meta property="og:description" content="Web, AI, APIs, automation and creative systems in one connected ecosystem.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2302010a'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='%238b63ff' font-family='sans-serif' font-weight='700'%3E1%3C/text%3E%3C/svg%3E">
-<noscript><style>.rv{opacity:1!important;transform:none!important}#loader{display:none!important}</style></noscript>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./style.css">
-</head><body>
-<div id="loader"><b>❶</b><i></i><small>BOOTING NEXUS CORE</small></div>
-<div id="webgl" aria-hidden="true"></div><div class="wash" aria-hidden="true"></div><div class="grid" aria-hidden="true"></div><div id="bar" aria-hidden="true"></div>
-<header class="top"><a class="brand" href="#c0">❶ VOXX NEXUS</a><span class="hud"><b id="hudNum">01</b>/08 · <span id="hudName">CORE</span></span></header>
-<nav id="dots" aria-label="Sections"></nav>
+<meta name="description" content="VOXX NEXUS builds websites, AI systems, APIs, automation and creative digital experiences.">
+<meta property="og:title" content="VOXX NEXUS — Digital Technology Studio">
+<meta property="og:description" content="VOXX NEXUS builds websites, AI systems, APIs, automation and creative digital experiences.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="fallback" aria-hidden="true"></div>
+<div class="glow" id="glow" aria-hidden="true"></div>
+
+<header class="top">
+  <a href="#core" class="mono brand">❶ VOXX NEXUS</a>
+  <span class="mono status"><i></i> SYSTEM ONLINE</span>
+  <div class="mono right">
+    <span class="node">NODE 001 / <a href="#contact">OPEN CHANNEL</a></span>
+    <button class="hud-btn" id="hudBtn" aria-expanded="false" aria-controls="hud">CTRL</button>
+  </div>
+</header>
+
+<aside class="hud" id="hud" aria-label="Interface controls">
+  <div class="row"><b class="mono">THEME</b><div data-group="theme"><button data-v="void">VOID</button><button data-v="ice">ICE</button><button data-v="violet">VIOLET</button><button data-v="matrix">MATRIX</button></div></div>
+  <div class="row"><b class="mono">FONT</b><div data-group="font"><button data-v="Space Grotesk">SPACE GROTESK</button><button data-v="Inter">INTER</button><button data-v="IBM Plex Mono">IBM PLEX MONO</button><button data-v="JetBrains Mono">JETBRAINS MONO</button></div></div>
+  <div class="row"><b class="mono">MOTION</b><div data-group="motion"><button data-v="cinematic">CINEMATIC</button><button data-v="smooth">SMOOTH</button><button data-v="reduced">REDUCED</button></div></div>
+</aside>
+
+<nav class="side" id="side" aria-label="Sections"></nav>
+
 <main>
-<section id="c0" class="ch" data-name="CORE"><div class="txt">
-<p class="eye rv">DIGITAL TECHNOLOGY STUDIO</p>
-<h1 class="rv" style="--d:.1s">Build what<br><em>comes next.</em></h1>
-<p class="lead rv" style="--d:.2s">Web, AI, APIs, automation and creative technology — engineered as one connected system.</p>
-<div class="row rv" style="--d:.3s"><a class="btn" href="#c7">Start a project</a><a class="ghost" href="#c1">Explore ↓</a></div></div></section>
-<section id="c1" class="ch" data-name="WEB"><div class="txt"><span class="num rv">01</span><h2 class="rv">Interfaces with <em>intent.</em></h2><p class="lead rv">Websites, web apps, stores and dashboards designed as living products, not pages.</p><p class="tags rv"><span>Web apps</span><span>E-commerce</span><span>Dashboards</span><span>UI / UX</span></p></div></section>
-<section id="c2" class="ch" data-name="AI"><div class="txt"><span class="num rv">02</span><h2 class="rv">Systems that <em>think ahead.</em></h2><p class="lead rv">AI assistants, model integrations and smart workflows wired into real operations.</p><p class="tags rv"><span>Assistants</span><span>LLM tools</span><span>Automation agents</span></p></div></section>
-<section id="c3" class="ch" data-name="API"><div class="txt"><span class="num rv">03</span><h2 class="rv">Connect the <em>infrastructure.</em></h2><p class="lead rv">APIs, auth, databases, webhooks and cloud services that move data with purpose.</p><p class="tags rv"><span>REST / GraphQL</span><span>Auth</span><span>Databases</span><span>Webhooks</span></p></div></section>
-<section id="c4" class="ch" data-name="AUTOMATION"><div class="txt"><span class="num rv">04</span><h2 class="rv">Make the <em>machine move.</em></h2><p class="lead rv">Bots and workflows that turn repetitive work into connected, self-running processes.</p><p class="tags rv"><span>Bots</span><span>Workflows</span><span>Integrations</span></p></div></section>
-<section id="c5" class="ch" data-name="CREATIVE"><div class="txt"><span class="num rv">05</span><h2 class="rv">Technology with <em>visual gravity.</em></h2><p class="lead rv">Branding, motion, video and interactive 3D built as one visual language.</p><p class="tags rv"><span>Brand</span><span>Motion</span><span>Video</span><span>3D / WebGL</span></p></div></section>
-<section id="c6" class="ch wide" data-name="PRICING"><div class="txt"><span class="num rv">06</span><h2 class="rv">Choose your <em>entry point.</em></h2>
-<div class="cards">
-<article class="card rv"><small>LAUNCH</small><h3>₹15K+</h3><p>Landing or portfolio site with responsive UI, 3D / motion layer and deployment.</p></article>
-<article class="card hot rv" style="--d:.1s"><small>SYSTEM · POPULAR</small><h3>₹35K+</h3><p>Full website or web app with custom interactions and API / database integration.</p></article>
-<article class="card rv" style="--d:.2s"><small>INTELLIGENCE</small><h3>₹60K+</h3><p>AI, automation, bots and connected systems, scoped to your needs.</p></article></div>
-<p class="note rv">* Illustrative starting prices. Final pricing depends on scope and integrations.</p></div></section>
-<section id="c7" class="ch" data-name="CONTACT"><div class="txt"><span class="num rv">07</span><h2 class="rv">Let’s build <em>what’s next.</em></h2><p class="lead rv">Tell us what you want to build. Bring the idea.</p>
-<div class="links rv"><a id="emailLink" href="#"><small>EMAIL</small><b>—</b></a><a id="instagramLink" href="#"><small>INSTAGRAM</small><b>—</b></a><a id="whatsappLink" href="#"><small>WHATSAPP</small><b>Direct chat</b></a><a id="telegramLink" href="#"><small>TELEGRAM</small><b>—</b></a></div>
-<a class="btn rv" id="briefLink" href="#">Send a brief</a></div></section>
+<section id="core" data-label="NEXUS CORE" class="hero">
+  <p class="mono label">NODE 001 / DIGITAL TECHNOLOGY STUDIO</p>
+  <h1 class="rv">BUILD<br>BEYOND.</h1>
+  <p class="mono tag">WE BUILD. WE DESIGN. WE AUTOMATE.</p>
+  <p class="lead">A technology studio operating where software, intelligence, automation and visual systems intersect.</p>
+  <div class="cta"><button class="btn mag" data-open>START A PROJECT ↗</button><a class="btn ghost mag" href="#web">EXPLORE THE SYSTEM ↓</a></div>
+  <p class="mono meta">WEB • AI • APIs • AUTOMATION • CREATIVE</p>
+  <div class="panel mono" aria-label="Nexus core status"><b>❶ NEXUS CORE</b><span>STATUS <em>ONLINE</em></span><span>SIGNAL <em>98%</em></span><span>BUILD <em>2026</em></span><span>NODE <em>001</em></span></div>
+</section>
+
+<section data-label="NEXUS CORE" class="blk">
+  <p class="mono label">01 / NEXUS CORE</p>
+  <h2 class="rv">THE CORE OF<br>WHAT WE BUILD.</h2>
+  <p class="lead">VOXX NEXUS combines software engineering, artificial intelligence, automation and visual technology into connected digital systems.</p>
+  <ul class="chips mono"><li>WEB</li><li>AI</li><li>APIs</li><li>AUTOMATION</li><li>CREATIVE</li></ul>
+</section>
+
+<section id="web" data-label="WEB SYSTEMS" class="blk">
+  <p class="mono label">02 / WEB SYSTEMS</p>
+  <h2 class="rv">DIGITAL ARCHITECTURE<br>WITH INTENT.</h2>
+  <p class="lead">Interfaces, websites, web applications and digital commerce systems designed as living products — not pages.</p>
+  <ul class="chips mono"><li>WEBSITES</li><li>WEB APPS</li><li>LANDING PAGES</li><li>DASHBOARDS</li><li>E-COMMERCE</li></ul>
+</section>
+
+<section id="ai" data-label="AI INTELLIGENCE" class="blk">
+  <p class="mono label">03 / AI INTELLIGENCE</p>
+  <h2 class="rv">SYSTEMS THAT<br>THINK FORWARD.</h2>
+  <p class="lead">AI assistants, agents, models and API integrations connected to real workflows.</p>
+  <ul class="chips mono"><li>AI CORE</li><li>AGENTS</li><li>MODELS</li><li>WORKFLOWS</li><li>INTELLIGENCE</li></ul>
+</section>
+
+<section id="api" data-label="API NETWORK" class="blk">
+  <p class="mono label">04 / API NETWORK</p>
+  <h2 class="rv">CONNECT THE<br>INFRASTRUCTURE.</h2>
+  <p class="lead">APIs, authentication, databases and cloud systems engineered to move data with purpose.</p>
+  <ol class="flow mono"><li>CLIENT</li><li>API</li><li>AUTH</li><li>DATABASE</li><li>SERVICE</li></ol>
+</section>
+
+<section id="automation" data-label="AUTOMATION" class="blk">
+  <p class="mono label">05 / AUTOMATION</p>
+  <h2 class="rv">MAKE THE<br>MACHINE MOVE.</h2>
+  <p class="lead">Bots, workflows and autonomous processes that turn repetitive operations into intelligent systems.</p>
+  <ol class="flow mono"><li>TRIGGER</li><li>PROCESS</li><li>AI</li><li>API</li><li>DATABASE</li><li>ACTION</li></ol>
+  <ul class="chips mono"><li>TELEGRAM BOTS</li><li>DISCORD BOTS</li><li>WORKFLOW AUTOMATION</li><li>BUSINESS AUTOMATION</li><li>DATA PIPELINES</li></ul>
+</section>
+
+<section id="creative" data-label="CREATIVE ENGINE" class="blk">
+  <p class="mono label">06 / CREATIVE ENGINE</p>
+  <h2 class="rv">TECHNOLOGY WITH<br>VISUAL GRAVITY.</h2>
+  <p class="lead">Branding, UI/UX, motion graphics, video editing and interactive experiences built as one visual language.</p>
+  <ul class="chips mono"><li>UI/UX</li><li>BRANDING</li><li>MOTION</li><li>VIDEO</li><li>3D</li><li>INTERACTIVE</li></ul>
+</section>
+
+<section id="services" data-label="SERVICES" class="blk wide">
+  <p class="mono label">07 / SERVICES</p>
+  <h2 class="rv">CHOOSE YOUR<br>SYSTEM.</h2>
+  <div class="grid">
+    <article class="card" data-tilt><h3 class="mono">WEB DESIGN</h3><p class="price">$30</p><p>Website design and development.</p><button class="btn" data-open data-svc="Website Design service ($30)">BUY / START PROJECT ↗</button></article>
+    <article class="card" data-tilt><h3 class="mono">BACKEND / API</h3><p class="price">$19</p><p>Backend systems, REST APIs and integrations.</p><button class="btn" data-open data-svc="Backend/API service ($19)">BUY / START PROJECT ↗</button></article>
+    <article class="card" data-tilt><h3 class="mono">AUTOMATION BOTS</h3><p class="price">$15</p><p>Telegram bots, Discord bots and workflow automation.</p><button class="btn" data-open data-svc="Automation Bots service ($15)">BUY / START PROJECT ↗</button></article>
+    <article class="card" data-tilt><h3 class="mono">CREATIVE VIDEO EDITING</h3><p class="price">$20</p><p>Creative video editing, motion design and digital content.</p><button class="btn" data-open data-svc="Creative Video Editing ($20)">BUY / START PROJECT ↗</button></article>
+  </div>
+  <p class="mono note">Starting prices. Final pricing may vary depending on project requirements.</p>
+</section>
+
+<section id="pricing" data-label="PRICING" class="blk wide">
+  <p class="mono label">08 / PRICING</p>
+  <h2 class="rv">STARTING<br>POINTS.</h2>
+  <ul class="plist">
+    <li><span>WEB DESIGN</span><b>$30</b></li><li><span>BACKEND / API</span><b>$19</b></li>
+    <li><span>AUTOMATION BOTS</span><b>$15</b></li><li><span>CREATIVE VIDEO EDITING</span><b>$20</b></li>
+  </ul>
+  <button class="btn mag" data-open>START A PROJECT ↗</button>
+</section>
+
+<section id="profile" data-label="PROFILE" class="blk">
+  <p class="mono label">09 / NODE 001</p>
+  <h2 class="rv">VOXX NEXUS</h2>
+  <p class="mono tag">DIGITAL TECHNOLOGY STUDIO — WE BUILD. WE DESIGN. WE AUTOMATE.</p>
+  <p class="lead">VOXX NEXUS is a digital technology studio building websites, AI systems, APIs, automation and creative digital experiences.</p>
+  <ul class="chips mono"><li>WEB</li><li>AI</li><li>APIs</li><li>AUTOMATION</li><li>CREATIVE</li></ul>
+</section>
+
+<section id="contact" data-label="CONTACT" class="blk wide">
+  <p class="mono label">10 / OPEN CHANNEL</p>
+  <h2 class="rv">LET'S BUILD<br>WHAT'S NEXT.</h2>
+  <div class="grid three">
+    <a class="card" data-tilt href="https://instagram.com/sisirey.vox" target="_blank" rel="noopener"><h3 class="mono">INSTAGRAM</h3><p class="big">@sisirey.vox</p><span class="mono">OPEN INSTAGRAM ↗</span></a>
+    <a class="card" data-tilt href="https://t.me/yor_forg3r" target="_blank" rel="noopener"><h3 class="mono">TELEGRAM</h3><p class="big">@yor_forg3r</p><span class="mono">OPEN TELEGRAM ↗</span></a>
+    <a class="card" data-tilt href="https://wa.me/918485800930" target="_blank" rel="noopener"><h3 class="mono">WHATSAPP</h3><p class="big">+91 8485800930</p><span class="mono">OPEN WHATSAPP ↗</span></a>
+  </div>
+  <button class="btn mag" data-open>START A PROJECT ↗</button>
+</section>
 </main>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
-<script type="module" src="./script.js"></script>
-</body></html>
+
+<footer class="mono">
+  <b>❶ VOXX NEXUS</b><span>DIGITAL TECHNOLOGY STUDIO</span><span>WEB • AI • APIs • AUTOMATION • CREATIVE</span>
+  <nav><a href="#core">PROFILE</a><a href="#web">SYSTEMS</a><a href="#services">SERVICES</a><a href="#pricing">PRICING</a><a href="#contact">CONTACT</a></nav>
+  <nav><a href="https://instagram.com/sisirey.vox" target="_blank" rel="noopener">Instagram</a><a href="https://wa.me/918485800930" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/yor_forg3r" target="_blank" rel="noopener">Telegram</a></nav>
+  <span>© 2026 VOXX NEXUS</span><span>BUILD BEYOND.</span>
+</footer>
+
+<dialog id="chooser" aria-labelledby="chTitle">
+  <p class="mono label">OPEN CHANNEL</p>
+  <h3 id="chTitle">CHOOSE YOUR CHANNEL</h3>
+  <p class="mono" id="chSvc"></p>
+  <a class="btn" id="chIg" target="_blank" rel="noopener">INSTAGRAM</a>
+  <a class="btn" id="chTg" target="_blank" rel="noopener">TELEGRAM</a>
+  <a class="btn" id="chWa" target="_blank" rel="noopener">WHATSAPP</a>
+  <button class="btn ghost" id="chClose">CLOSE</button>
+</dialog>
+<script type="module" src="script.js"></script>
+</body>
+</html>
