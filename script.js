@@ -83,14 +83,15 @@ async function initWebGL(){
   $('#webgl').append(renderer.domElement);
 
   // Image-based lighting so the dark metallic GLB materials have something to reflect.
-  const pmrem=new THREE.PMREMGenerator(renderer);
+  try{const pmrem=new THREE.PMREMGenerator(renderer);
   scene.environment=pmrem.fromScene(new RoomEnvironment(),.04).texture;
-  scene.environmentIntensity=.9;
+  scene.environmentIntensity=.9}catch(e){note('env off: '+e.message)}
 
-  const composer=new EffectComposer(renderer);
+  let composer=null;
+  try{composer=new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene,camera));
   composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),mobile?.7:.9,.68,.78));
-  composer.addPass(new OutputPass());
+  composer.addPass(new OutputPass())}catch(e){composer=null;note('glow off: '+e.message)}
 
   scene.add(new THREE.HemisphereLight(0x74cfff,0x03050a,.75));
   const key=new THREE.PointLight(0x5fe9ff,18,20);key.position.set(4,3,5);scene.add(key);
@@ -166,7 +167,8 @@ async function initWebGL(){
 
   // One real 3D station per section, spread on a spiral around the core; the camera flies between them.
   const geos=[null,new THREE.TorusKnotGeometry(1,.3,180,24),new THREE.BoxGeometry(1.7,1.7,1.7,3,3,3),new THREE.IcosahedronGeometry(1.4,1),new THREE.SphereGeometry(1.3,20,14),new THREE.TorusGeometry(1.2,.4,14,40),new THREE.OctahedronGeometry(1.5),new THREE.DodecahedronGeometry(1.4),new THREE.ConeGeometry(1.2,2.4,6),new THREE.TetrahedronGeometry(1.6)];
-  const stations=[],camPts=[],tgtPts=[],links3d=[];
+  const stations=[],camPts=[],tgtPts=[],links3d=[];let camCurve=null,tgtCurve=null;
+  try{
   sections.forEach((_,i)=>{
     const a=i*.72,dir=new THREE.Vector3(Math.cos(a),0,Math.sin(a)),y=(i%3-1)*2.2;
     if(!i){camPts.push(new THREE.Vector3(0,.1,7.4));tgtPts.push(new THREE.Vector3());return}
@@ -180,13 +182,15 @@ async function initWebGL(){
     links3d.push(new THREE.Vector3(),pos);
   });
   scene.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(links3d),new THREE.LineBasicMaterial({color:0x5fe9ff,transparent:true,opacity:.14})));
-  const camCurve=new THREE.CatmullRomCurve3(camPts,false,'catmullrom',.5),tgtCurve=new THREE.CatmullRomCurve3(tgtPts,false,'catmullrom',.5);
+  camCurve=new THREE.CatmullRomCurve3(camPts,false,'catmullrom',.5);tgtCurve=new THREE.CatmullRomCurve3(tgtPts,false,'catmullrom',.5);
+  }catch(e){camCurve=null;note('stations off: '+e.message)}
   const cp=new THREE.Vector3(),tp=new THREE.Vector3();let sp=0;
 
   const pointer=new THREE.Vector2(),smooth=new THREE.Vector2();
   addEventListener('pointermove',e=>{pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight*2-1)});
 
-  function animate(ms){
+  let shown=false;
+  function animate(ms){try{
     const t=ms*.001;
     const max=Math.max(1,document.documentElement.scrollHeight-innerHeight);
     const progress=scrollY/max;
@@ -205,9 +209,9 @@ async function initWebGL(){
 
     sp+=(raw-sp)*.06;
     const u=Math.min(1,Math.max(0,sp/(sections.length-1)));
-    camCurve.getPoint(u,cp);tgtCurve.getPoint(u,tp);
+    if(camCurve){camCurve.getPoint(u,cp);tgtCurve.getPoint(u,tp);
     camera.position.set(cp.x+smooth.x*.5,cp.y+smooth.y*.35,cp.z);
-    camera.lookAt(tp.x+smooth.x*.3,tp.y+smooth.y*.2,tp.z);
+    camera.lookAt(tp.x+smooth.x*.3,tp.y+smooth.y*.2,tp.z)}else camera.lookAt(0,0,0);
     stations.forEach((g,k)=>{
       const on=Math.abs(sp-g.userData.i)<.6;
       g.rotation.y=t*.25+k;g.rotation.x=t*.12;g.position.y=g.userData.y+Math.sin(t*.8+k)*.15;
@@ -221,7 +225,8 @@ async function initWebGL(){
     energy.uniforms.t.value=t;
     holo.uniforms.t.value=t;
     rings.forEach(r=>{r.rotation.z+=r.userData.speed*(reduced?.25:1)});
-    try{composer.render()}catch(e){renderer.render(scene,camera)}
+    if(composer){try{composer.render()}catch(e){composer=null;renderer.render(scene,camera)}}else renderer.render(scene,camera);
+    }catch(e){if(!shown){shown=true;note('frame: '+e.message+' '+(e.stack||'').split('\n')[1])}}
     requestAnimationFrame(animate);
   }
   requestAnimationFrame(animate);
@@ -229,13 +234,13 @@ async function initWebGL(){
 
   addEventListener('resize',()=>{
     camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
-    renderer.setPixelRatio(Math.min(devicePixelRatio,mobile?1.15:1.7));renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio,mobile?1.15:1.7));renderer.setSize(innerWidth,innerHeight);composer?.setSize(innerWidth,innerHeight);
   });
 }
 
 initWebGL().catch(err=>{
   console.error('VOXX NEXUS: 3D scene unavailable, showing the page without it.',err);
   document.documentElement.classList.add('no-webgl');
-  note('3D failed: '+(err&&err.message||err));
+  note('3D failed: '+(err&&err.message||err)+' '+((err&&err.stack)||'').split('\n').slice(1,3).join(' ').replace(/https?:\/\/[^ )]*\//g,''));
   hideLoader();
 });
