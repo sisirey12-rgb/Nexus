@@ -83,11 +83,11 @@ async function initWebGL(){
   // Image-based lighting so the dark metallic GLB materials have something to reflect.
   const pmrem=new THREE.PMREMGenerator(renderer);
   scene.environment=pmrem.fromScene(new RoomEnvironment(),.04).texture;
-  scene.environmentIntensity=.5;
+  scene.environmentIntensity=.9;
 
   const composer=new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene,camera));
-  composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),mobile?.38:.62,.68,.78));
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),mobile?.7:.9,.68,.78));
   composer.addPass(new OutputPass());
 
   scene.add(new THREE.HemisphereLight(0x74cfff,0x03050a,.75));
@@ -108,26 +108,30 @@ async function initWebGL(){
     hideLoader();
   },undefined,err=>{
     console.error(`VOXX NEXUS: could not load ${GLB}. Check that the file is at assets/voxx-nexus-core.glb and serve the site over http(s), not file://.`,err);
+    const m=new THREE.MeshStandardMaterial({color:0x0b1822,metalness:.9,roughness:.2,emissive:0x1fbfff,emissiveIntensity:.7,flatShading:true});
+    core.add(new THREE.Mesh(new THREE.IcosahedronGeometry(1.5,1),m));
+    const w=new THREE.Mesh(new THREE.IcosahedronGeometry(1.95,1),new THREE.MeshBasicMaterial({color:0x78edff,wireframe:true,transparent:true,opacity:.7,blending:THREE.AdditiveBlending,depthWrite:false}));
+    core.add(w);core.add(new THREE.Mesh(new THREE.OctahedronGeometry(.75),new THREE.MeshBasicMaterial({color:0xa77dff})));
     hideLoader();
   });
 
   // Holographic shell with animated scan bands / Fresnel-like edge energy.
-  const holo=new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,uniforms:{t:{value:0}},vertexShader:`varying vec3 vN;varying vec3 vP;void main(){vN=normalize(normalMatrix*normal);vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform float t;varying vec3 vN;varying vec3 vP;void main(){float fres=pow(1.0-abs(vN.z),2.6);float scan=pow(0.5+0.5*sin(vP.y*22.0-t*3.0),7.0);float grid=step(.965,fract(vP.x*8.0))*0.05;float a=(fres*.14+scan*.045+grid);gl_FragColor=vec4(.18,.82,1.0,a);}`});
+  const holo=new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,uniforms:{t:{value:0}},vertexShader:`varying vec3 vN;varying vec3 vP;void main(){vN=normalize(normalMatrix*normal);vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform float t;varying vec3 vN;varying vec3 vP;void main(){float fres=pow(1.0-abs(vN.z),2.6);float scan=pow(0.5+0.5*sin(vP.y*22.0-t*3.0),7.0);float grid=step(.965,fract(vP.x*8.0))*0.05;float a=(fres*.5+scan*.12+grid);gl_FragColor=vec4(.18,.82,1.0,a);}`});
   core.add(new THREE.Mesh(new THREE.SphereGeometry(2.58,96,64),holo));
 
-  const energy=new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:{t:{value:0}},vertexShader:`varying vec3 p;void main(){p=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform float t;varying vec3 p;void main(){float n=sin(p.x*9.0+t*2.8)+sin(p.y*13.0-t*2.1)+sin(p.z*15.0+t*1.7);float e=smoothstep(.72,1.0,sin(n*2.0));gl_FragColor=vec4(.05,.66,1.0,e*.28);}`});
+  const energy=new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:{t:{value:0}},vertexShader:`varying vec3 p;void main(){p=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform float t;varying vec3 p;void main(){float n=sin(p.x*9.0+t*2.8)+sin(p.y*13.0-t*2.1)+sin(p.z*15.0+t*1.7);float e=smoothstep(.72,1.0,sin(n*2.0));gl_FragColor=vec4(.05,.66,1.0,e*.6);}`});
   core.add(new THREE.Mesh(new THREE.SphereGeometry(1.55,72,48),energy));
 
   // Orbital machinery.
   function ring(radius,tube,tilt,color,speed){
-    const m=new THREE.Mesh(new THREE.TorusGeometry(radius,tube,12,160),new THREE.MeshStandardMaterial({color,metalness:.86,roughness:.24,emissive:color,emissiveIntensity:.16}));
+    const m=new THREE.Mesh(new THREE.TorusGeometry(radius,tube,12,160),new THREE.MeshStandardMaterial({color,metalness:.86,roughness:.24,emissive:color,emissiveIntensity:.9}));
     m.rotation.set(tilt.x,tilt.y,tilt.z);m.userData.speed=speed;machinery.add(m);return m;
   }
   const rings=[
-    ring(2.05,.018,{x:1.15,y:.2,z:.12},0x65eaff,.12),
-    ring(2.35,.012,{x:.25,y:1.12,z:.5},0x744cff,-.09),
-    ring(2.72,.009,{x:1.3,y:-.2,z:-.55},0x3f9cff,.055),
-    ring(3.05,.006,{x:.55,y:.7,z:1.05},0x8b63ff,-.035)
+    ring(2.05,.045,{x:1.15,y:.2,z:.12},0x65eaff,.12),
+    ring(2.35,.035,{x:.25,y:1.12,z:.5},0x744cff,-.09),
+    ring(2.72,.028,{x:1.3,y:-.2,z:-.55},0x3f9cff,.055),
+    ring(3.05,.022,{x:.55,y:.7,z:1.05},0x8b63ff,-.035)
   ];
   for(let i=0;i<10;i++){
     const a=i*Math.PI*2/10;
@@ -167,8 +171,8 @@ async function initWebGL(){
     const pos=dir.clone().multiplyScalar(13.5).setY(y),c=i%2?0x35d8ff:0x8b63ff;
     tgtPts.push(pos.clone().add(new THREE.Vector3(-dir.z,0,dir.x).multiplyScalar(i%2?-2.6:2.6)));
     const g=new THREE.Group();g.position.copy(pos);g.userData={i,y};
-    g.add(new THREE.Mesh(geos[i],new THREE.MeshStandardMaterial({color:0x0b1822,metalness:.9,roughness:.25,emissive:c,emissiveIntensity:.22})));
-    const wire=new THREE.Mesh(geos[i],new THREE.MeshBasicMaterial({color:c,wireframe:true,transparent:true,opacity:.3,blending:THREE.AdditiveBlending,depthWrite:false}));
+    g.add(new THREE.Mesh(geos[i],new THREE.MeshStandardMaterial({color:0x0b1822,metalness:.9,roughness:.25,emissive:c,emissiveIntensity:.5})));
+    const wire=new THREE.Mesh(geos[i],new THREE.MeshBasicMaterial({color:c,wireframe:true,transparent:true,opacity:.6,blending:THREE.AdditiveBlending,depthWrite:false}));
     wire.scale.setScalar(1.06);g.add(wire);scene.add(g);stations.push(g);
     links3d.push(new THREE.Vector3(),pos);
   });
@@ -205,7 +209,7 @@ async function initWebGL(){
       const on=Math.abs(sp-g.userData.i)<.6;
       g.rotation.y=t*.25+k;g.rotation.x=t*.12;g.position.y=g.userData.y+Math.sin(t*.8+k)*.15;
       g.scale.setScalar(g.scale.x+((on?1.35:1)-g.scale.x)*.06);
-      g.children[0].material.emissiveIntensity+=((on?.9:.22)-g.children[0].material.emissiveIntensity)*.08;
+      g.children[0].material.emissiveIntensity+=((on?1.5:.5)-g.children[0].material.emissiveIntensity)*.08;
     });
 
     key.position.x=3.5+smooth.x*2.5;
