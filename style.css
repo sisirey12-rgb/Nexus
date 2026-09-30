@@ -64,3 +64,24 @@ dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(6px)}
 .reduce .rv{transition:none;opacity:1;transform:none;filter:none}
 @media(prefers-reduced-motion:reduce){.rv{transition:none;opacity:1;transform:none;filter:none}html{scroll-behavior:auto}}
 @media(max-width:600px){.status{display:none}.node{display:none}}
+
+/* ---- Cards v2: layered 3D, sheen, spring-back ---- */
+.card{--s:1;transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(var(--s));transition:transform .7s cubic-bezier(.34,1.56,.64,1),border-color .3s,box-shadow .4s;box-shadow:0 10px 30px rgba(0,0,0,.4);will-change:transform}
+.card:hover,.card:focus-visible{--s:1.03;box-shadow:0 30px 70px rgba(0,0,0,.6),0 0 0 1px var(--accent),0 0 40px var(--glow)}
+.card.hot{transition:transform .08s linear,border-color .3s,box-shadow .4s}
+.card::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:linear-gradient(115deg,transparent calc(var(--sx,50%) - 22%),rgba(255,255,255,.14) var(--sx,50%),transparent calc(var(--sx,50%) + 22%));mix-blend-mode:overlay}
+.card:hover::before{opacity:1}
+.card>*{position:relative;z-index:1;transition:transform .7s cubic-bezier(.34,1.56,.64,1);transform:translate3d(calc(var(--px,0)*var(--d,8)*1px),calc(var(--py,0)*var(--d,8)*1px),0)}
+.card.hot>*{transition:transform .08s linear}
+.card h3{--d:14}.card .price,.card .ico,.card .handle{--d:24}
+.card .btn{margin-top:auto}
+.card .price{text-shadow:0 0 30px var(--glow)}
+/* contact */
+.contact{min-height:220px;justify-content:flex-end;text-decoration:none}
+.contact .ico{width:44px;height:44px;color:var(--accent);margin-bottom:auto;filter:drop-shadow(0 0 10px var(--glow))}
+.handle{font-size:clamp(1.15rem,2.6vw,1.6rem);font-weight:700;overflow-wrap:anywhere;line-height:1.2}
+.go{color:var(--accent);padding-top:10px;border-top:1px solid var(--line)}
+.contact:hover .go{letter-spacing:.2em}
+.contact-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+@media(prefers-reduced-motion:reduce){.card,.card>*{transition:none}}
+.reduce .card,.reduce .card>*{transition:none;transform:none}
