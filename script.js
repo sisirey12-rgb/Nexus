@@ -161,7 +161,7 @@ async function initWebGL(){
   const shards=new THREE.Group();scene.add(shards);
   for(let i=0;i<(mobile?12:24);i++){
     const a=i*Math.PI*2/(mobile?12:24),r=THREE.MathUtils.randFloat(16,25),h=THREE.MathUtils.randFloat(.15,.55);
-    const mesh=new THREE.Mesh(new THREE.OctahedronGeometry(h,.2),new THREE.MeshStandardMaterial({color:i%3===0?0x5d46a6:0x183341,metalness:.85,roughness:.28,emissive:i%4===0?0x1d8bb0:0x061016,emissiveIntensity:.4}));
+    const mesh=new THREE.Mesh(new THREE.OctahedronGeometry(h,0),new THREE.MeshStandardMaterial({color:i%3===0?0x5d46a6:0x183341,metalness:.85,roughness:.28,emissive:i%4===0?0x1d8bb0:0x061016,emissiveIntensity:.4}));
     mesh.position.set(Math.cos(a)*r,THREE.MathUtils.randFloatSpread(5),Math.sin(a)*r);mesh.userData.spin=(Math.random()-.5)*.012;shards.add(mesh);
   }
 
