@@ -70,3 +70,12 @@ dialog[open]{display:flex;flex-direction:column;gap:10px}dialog::backdrop{backgr
 @keyframes rise{from{opacity:0;translate:0 28px;filter:blur(8px)}to{opacity:1;translate:0 0;filter:blur(0)}}
 .rv{opacity:0}.rv.in{animation:rise var(--dur) var(--ease) both;animation-delay:calc(var(--i,0)*90ms)}
 @media(prefers-reduced-motion:reduce){.rv{opacity:1}.rv.in,.dash,.nodes circle,.bars i{animation:none}.card,.card>*{transition:none}html{scroll-behavior:auto}}
+
+/* ---- scroll-linked 3D card UI ---- */
+section{perspective:1400px}
+.card{background:linear-gradient(145deg,color-mix(in srgb,var(--accent) calc(var(--act,0)*14%),color-mix(in srgb,var(--text) 8%,var(--bg))),var(--card));border-color:color-mix(in srgb,var(--accent) calc(var(--act,0)*65%),var(--line));box-shadow:0 12px 30px rgba(0,0,0,.25),0 0 calc(var(--act,0)*50px) var(--glow)}
+.card h3{color:color-mix(in srgb,var(--accent) calc(var(--act,0)*100%),var(--text))}
+.card .price{filter:none}
+@keyframes risec{from{opacity:0}to{opacity:1}}
+.card.rv.in{animation-name:risec}
+.card.rv{filter:none}
