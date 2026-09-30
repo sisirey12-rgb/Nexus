@@ -1,4 +1,4 @@
-const $=s=>document.querySelector(s);
+const $=s=>document.querySelector(s)||document.createElement('i');
 const $$=s=>[...document.querySelectorAll(s)];
 const mobile=matchMedia('(max-width:760px)').matches;
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -56,6 +56,7 @@ function setMenu(open){rail.classList.toggle('open',open);menu?.setAttribute('ar
 menu?.addEventListener('click',()=>setMenu(!rail.classList.contains('open')));
 links.forEach(l=>l.addEventListener('click',()=>setMenu(false)));
 
+function note(msg,ok){const d=document.createElement('div');d.style.cssText='position:fixed;left:8px;right:8px;bottom:44px;z-index:99;font:11px monospace;color:'+(ok?'#9fffd0':'#ffb4b4')+';background:#200;padding:6px;border:1px solid #a33;word-break:break-word';d.textContent=msg;document.body.append(d);if(ok)setTimeout(()=>d.remove(),5000)}
 /* ---------- WebGL scene (loaded lazily, fails gracefully) ---------- */
 async function initWebGL(){
   const [THREE,{GLTFLoader},{EffectComposer},{RenderPass},{UnrealBloomPass},{OutputPass},{RoomEnvironment}]=await Promise.all([
@@ -72,9 +73,10 @@ async function initWebGL(){
   scene.fog=new THREE.FogExp2(0x02060a,mobile?.026:.018);
   const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.1,120);
   camera.position.set(0,.1,7.4);
-  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
+  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,mobile?1.15:1.7));
   renderer.setSize(innerWidth,innerHeight);
+  renderer.setClearColor(0x02060a,1);
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure=1.08;
@@ -108,6 +110,7 @@ async function initWebGL(){
     hideLoader();
   },undefined,err=>{
     console.error(`VOXX NEXUS: could not load ${GLB}. Check that the file is at assets/voxx-nexus-core.glb and serve the site over http(s), not file://.`,err);
+    note('Model not loaded, using backup core.');
     const m=new THREE.MeshStandardMaterial({color:0x0b1822,metalness:.9,roughness:.2,emissive:0x1fbfff,emissiveIntensity:.7,flatShading:true});
     core.add(new THREE.Mesh(new THREE.IcosahedronGeometry(1.5,1),m));
     const w=new THREE.Mesh(new THREE.IcosahedronGeometry(1.95,1),new THREE.MeshBasicMaterial({color:0x78edff,wireframe:true,transparent:true,opacity:.7,blending:THREE.AdditiveBlending,depthWrite:false}));
@@ -218,10 +221,11 @@ async function initWebGL(){
     energy.uniforms.t.value=t;
     holo.uniforms.t.value=t;
     rings.forEach(r=>{r.rotation.z+=r.userData.speed*(reduced?.25:1)});
-    composer.render();
+    try{composer.render()}catch(e){renderer.render(scene,camera)}
     requestAnimationFrame(animate);
   }
   requestAnimationFrame(animate);
+  note('3D v3 running',true);
 
   addEventListener('resize',()=>{
     camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
@@ -232,5 +236,6 @@ async function initWebGL(){
 initWebGL().catch(err=>{
   console.error('VOXX NEXUS: 3D scene unavailable, showing the page without it.',err);
   document.documentElement.classList.add('no-webgl');
+  note('3D failed: '+(err&&err.message||err));
   hideLoader();
 });
