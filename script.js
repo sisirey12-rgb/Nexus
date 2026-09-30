@@ -154,6 +154,19 @@ try {
   setTarget = idx => { const k = order[Math.min(idx, order.length - 1)]; for (let i = 0; i < N; i++) tgt.set(shape(k, i), i * 3); };
   setTarget(0);
 
+  // Energy beam: vertical plasma stream behind the core
+  const beamU = { uT: { value: 0 }, uA: { value: new THREE.Color(0x00e5ff) }, uB: { value: new THREE.Color(0x7c3aed) }, uO: { value: 1 } };
+  const beam = new THREE.Mesh(new THREE.PlaneGeometry(5, 34), new THREE.ShaderMaterial({ uniforms: beamU, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    vertexShader: 'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+    fragmentShader: 'varying vec2 vUv;uniform float uT,uO;uniform vec3 uA,uB;void main(){float x=vUv.x-.5;x+=sin(vUv.y*9.-uT*1.5)*.02;float s=.5+.5*sin(vUv.y*46.-uT*4.+sin(x*30.+uT)*2.);float core=exp(-x*x*420.);float halo=exp(-x*x*30.);float i=core*(.65+.6*s)+halo*.35*(.5+.5*s);vec3 c=mix(uB,uA,clamp(core*1.4,0.,1.))+core*.6;gl_FragColor=vec4(c*i,i*uO);}' }));
+  beam.position.z = -3; scene.add(beam);
+  const BN = weak ? 700 : 1800, bp = new Float32Array(BN * 3), bs = new Float32Array(BN);
+  for (let i = 0; i < BN; i++) { bs[i] = .3 + Math.random(); bp[i * 3] = (Math.random() + Math.random() - 1) * 1.2; bp[i * 3 + 1] = (Math.random() - .5) * 20; bp[i * 3 + 2] = -3 + (Math.random() - .5) * 2; }
+  const bGeo = new THREE.BufferGeometry(); bGeo.setAttribute('position', new THREE.BufferAttribute(bp, 3));
+  const bMat = new THREE.PointsMaterial({ size: .04, color: 0x00e5ff, transparent: true, opacity: .9, depthWrite: false, blending: THREE.AdditiveBlending });
+  const bpts = new THREE.Points(bGeo, bMat); scene.add(bpts);
+  hooks.push(t => { beamU.uA.value.set(t.accent); beamU.uB.value.set(t.a2); bMat.color.set(t.accent); });
+
   // Post
   const comp = new EffectComposer(renderer); comp.addPass(new RenderPass(scene, cam));
   const bloom = new UnrealBloomPass(new THREE.Vector2(512, 512), weak ? .5 : .8, .6, .25); comp.addPass(bloom); comp.addPass(new OutputPass());
@@ -191,6 +204,10 @@ try {
       arr[j + 2] += (tgt[j + 2] - arr[j + 2]) * .03 * sp;
     }
     pGeo.attributes.position.needsUpdate = true; pts.rotation.y = time * (red ? 0 : .03) + mouse.x * .15; pts.rotation.x = mouse.y * .05;
+    beamU.uT.value = time; beamU.uO.value = Math.max(.3, 1 - p * 2.5);
+    beam.position.x = bpts.position.x = core.position.x; beam.position.y = bpts.position.y = p * 6;
+    if (!red) for (let i = 0; i < BN; i++) { const q = i * 3 + 1; bp[q] -= dt * bs[i] * 2.2; if (bp[q] < -10) bp[q] = 10; bp[q - 1] += Math.sin(time * 2 + bs[i] * 20) * .003; }
+    bGeo.attributes.position.needsUpdate = true;
     comp.render();
   };
   requestAnimationFrame(loop);
@@ -199,3 +216,6 @@ try {
   console.warn('WebGL unavailable, using fallback', err);
   document.body.classList.add('nogl'); applyTheme();
 }
+
+// Staggered reveal indices
+$$('main section').forEach(s => $$('.lead,.chips li,.flow li,.cta,.grid>*,.plist li,.panel,.note,.btn.mag', s).forEach((el, i) => el.style.setProperty('--i', i)));
