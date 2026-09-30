@@ -65,8 +65,8 @@ const GEN=[
  i=>{if(i%9<4){const s=(i%8)*.83;return[Math.sin(s*3)*1.3+gs()*.12,Math.cos(s*2.3)*.7+gs()*.12,gs()*.12]}const s=Math.random();return[Math.sin(s*3.2)*.35+.2+gs()*.05,(s-.5)*2.6,gs()*.08]},
  i=>{const r=Math.pow(Math.random(),.6)*1.5,a=(i%3)*2.094+r*3.2+gs()*.15;return rotX([r*Math.cos(a),gs()*.05*(1-r*.4),r*Math.sin(a)],.8)}];
 const calc=()=>tops=SEC.map(id=>document.getElementById(id).offsetTop);
-function size(){D=Math.min(devicePixelRatio||1,innerWidth<768?1.25:2);W=cv.width=innerWidth*D;H=cv.height=innerHeight*D;N=innerWidth<768?1800:4800;
-  P=Array.from({length:N},(_,i)=>({d:Math.random(),s:.5+Math.random()*1.3,b:.3+Math.random()*.7,k:i%3===0})).sort((a,b)=>a.k-b.k);
+function size(){D=Math.min(devicePixelRatio||1,innerWidth<768?1.25:2);W=cv.width=innerWidth*D;H=cv.height=innerHeight*D;N=innerWidth<768?2600:7000;
+  P=Array.from({length:N},(_,i)=>({d:Math.random(),s:.4+Math.random()*1.1,b:.3+Math.random()*.7,k:i%3===0})).sort((a,b)=>a.k-b.k);
   SCN=GEN.map(f=>{const a=new Float32Array(N*3);for(let i=0;i<N;i++)a.set(f(i),i*3);return a});calc()}
 addEventListener('resize',size);addEventListener('load',calc);size();
 addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5},{passive:true});
@@ -79,6 +79,10 @@ function cardFx(punch,still){const vh=innerHeight,k=K[st.motion]*2+.05,rs=cards.
     const th=Math.hypot(o.rx,o.ry);
     c.style.rotate=th>.02?`${o.rx.toFixed(3)} ${o.ry.toFixed(3)} 0 ${th.toFixed(2)}deg`:'none';
     c.style.translate=`0 0 ${o.z.toFixed(1)}px`;c.style.scale=(1+punch*.05*o.a).toFixed(3);c.style.setProperty('--act',o.a.toFixed(3))})}
+const SHORT=['NEXUS','SYSTEMS','CAPABILITIES','PROCESS','SIGNAL','CHANNEL'],CAPS=['Software, intelligence, automation and visual systems, engineered as one connected ecosystem.','Websites, APIs, bots and video from $15. Pick a system and open a channel.','Five disciplines. One signal.','From idea to live system in five connected steps.','Straight answers before you start.','Instagram, Telegram or WhatsApp. Pick one and say hello.'];
+$('#idx').innerHTML=SEC.map((id,i)=>`<a href="#${id}">${SHORT[i]}</a>`).join('');
+function updateUI(s){$('#sc').textContent=`[ SCENE 0${s+1} / ${NAMES[s]} ]`;$('#capt').innerHTML=`<b>SEC.00${s+1} — ${NAMES[s]}</b><p>${CAPS[s]}</p><button data-open>START A PROJECT ↗</button>`;$$('#idx a').forEach((a,i)=>a.classList.toggle('on',i===s))}
+updateUI(0);
 function frame(now){requestAnimationFrame(frame);if(!vis)return;
   if(++fc%90===0)calc();
   const still=reduceMQ.matches,sp=SPEED[st.motion],t=now/1000*sp;
@@ -88,7 +92,7 @@ function frame(now){requestAnimationFrame(frame);if(!vis)return;
   const f=i>=5?0:(y-tops[i])/Math.max(1,tops[i+1]-tops[i]),f2=Math.min(1,Math.max(0,(f-.2)/.6));
   sm+=((i+f2)-sm)*K[st.motion];
   const a=Math.min(4,Math.floor(sm)),ff=sm-a,sc=Math.round(sm);
-  if(sc!==lastSc){lastSc=sc;$('#sc').textContent=`SCENE 0${sc+1} / ${NAMES[sc]}`}
+  if(sc!==lastSc){lastSc=sc;updateUI(sc)}
   const ta=SCN[a],tb=SCN[a+1],C={a:col.a,b:col.b,w:col.dark?'#ffffff':col.a},cs=SC[sc];
   const R=Math.min(W,H)*.5*(1+punch*.15),F=R*3,cx=(innerWidth<900?.5:.6)*W+mx*30*D,cy=H*.5+my*20*D;
   const th=(still?0:t*.12)+mx*.5+sm*.35,ct=Math.cos(th),s_=Math.sin(th),pit=my*.25,cp=Math.cos(pit),sp_=Math.sin(pit),burst=Math.sin(Math.PI*ff);
@@ -99,5 +103,6 @@ function frame(now){requestAnimationFrame(frame);if(!vis)return;
     const X1=X*ct+Z*s_,Z1=-X*s_+Z*ct,Y2=Y*cp-Z1*sp_,Z2=Y*sp_+Z1*cp,k=F/(F+Z2*R),c=p.k?1:0;
     if(c!==cur){cur=c;g.fillStyle=C[cs[c]]}
     const s=p.s*D*k*(1.1+punch);g.globalAlpha=(.25+.75*p.b)*Math.min(1,k*k)*(col.dark?1:.75);g.fillRect(cx+X1*R*k-s/2,cy+Y2*R*k-s/2,s,s)}
+  if(col.dark){const w=Math.max(0,1-sm)+.6*Math.max(0,sm-4),gr=g.createRadialGradient(cx,cy,0,cx,cy,R*.45);gr.addColorStop(0,C.a);gr.addColorStop(1,'rgba(0,0,0,0)');g.globalAlpha=.4*Math.min(1,w);g.fillStyle=gr;g.fillRect(cx-R,cy-R,R*2,R*2)}
   g.globalAlpha=1}
 apply();requestAnimationFrame(frame);
