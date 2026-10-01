@@ -1,66 +1,372 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VOXX NEXUS — Digital Technology Studio</title>
 <meta name="description" content="VOXX NEXUS builds websites, AI systems, APIs, automation and creative digital experiences.">
 <meta property="og:title" content="VOXX NEXUS — Digital Technology Studio">
 <meta property="og:description" content="VOXX NEXUS builds websites, AI systems, APIs, automation and creative digital experiences.">
 <meta property="og:type" content="website">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Italiana&family=Outfit:wght@300;400;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;user-select:none}
+html,body{width:100%;background:#000;-ms-overflow-style:none;scrollbar-width:none}
+body{min-height:900vh;font-family:'Outfit',sans-serif;color:#fff;overflow-x:hidden}
+::-webkit-scrollbar{display:none;width:0}
+@media(hover:hover) and (pointer:fine){body,*{cursor:none!important}}
+body.nogl{background:radial-gradient(circle at 60% 40%,#1b1442,#000 70%)}
+:focus-visible{outline:2px solid #00E5FF;outline-offset:3px}
+#webgl{position:fixed;inset:0;width:100%;height:100%;z-index:1;outline:none}
+.cursor-inner,.cursor-outer{position:fixed;top:0;left:0;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;display:none}
+@media(hover:hover) and (pointer:fine){.cursor-inner,.cursor-outer{display:block}}
+.cursor-inner{width:6px;height:6px;border:2px solid #fff;z-index:9999}
+.cursor-outer{width:40px;height:40px;border:1.5px solid rgba(255,255,255,.7);z-index:9998;transition:width .3s,height .3s,background .3s}
+.cursor-outer.big{width:64px;height:64px;background:rgba(255,255,255,.1)}
+.cinematic-container{position:fixed;inset:0;z-index:10;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:0 60px 40px;box-sizing:border-box}
+.main-header{display:flex;justify-content:space-between;align-items:center;width:100%;z-index:20;pointer-events:auto;padding:20px 0}
+.brand{font-size:14px;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:#fff;text-decoration:none}
+.header-nav{display:flex;align-items:center;gap:24px}
+.nav-link{color:#fff;text-decoration:none;font-size:10px;text-transform:uppercase;letter-spacing:2px;font-weight:500;transition:color .3s}
+.nav-link:hover{color:#00E5FF}
+.nav-dot{width:3px;height:3px;background:rgba(255,255,255,.2);border-radius:50%}
+.contact-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:#fff;color:#000;border:0;font-family:inherit;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:600;border-radius:20px;transition:transform .3s,background .3s;cursor:pointer}
+.btn-circle{display:inline-block;width:6px;height:6px;border:1px solid #000;border-radius:50%}
+.contact-btn:hover{transform:scale(1.05);background:#f0f0f0}
+.slide{position:absolute;bottom:12%;pointer-events:none}
+#slide-1{left:0;width:100%}#slide-1 .slide-title{margin-left:60px}
+#slide-1 .desc-row{position:relative;display:flex;width:100%}
+#slide-1 .col-1{margin-left:60px;width:calc(25vw - 60px);max-width:calc(25vw - 60px)}
+#slide-1 .col-2{position:absolute;left:calc(25vw + 40px);width:calc(25vw - 60px);max-width:calc(25vw - 60px)}
+#slide-2{left:0;width:100%}
+#slide-2-img{position:fixed;top:90px;left:60px;width:calc(25vw - 60px);aspect-ratio:1/1;overflow:hidden;z-index:2;pointer-events:none;clip-path:inset(0 0 100% 0);transition:clip-path 1.8s cubic-bezier(.16,1,.3,1),opacity .8s ease;opacity:0}
+#slide-2-img svg{width:100%;height:100%;transform:scale(1.15);transition:transform 1.8s cubic-bezier(.16,1,.3,1)}
+#slide-2-img.active{clip-path:inset(0 0 0 0);opacity:1}#slide-2-img.active svg{transform:scale(1)}
+#slide-2 .slide-title{margin-left:calc(25vw + 40px)}
+#slide-2 .slide-desc{margin-left:calc(50vw + 20px);width:calc(25vw - 60px);max-width:calc(25vw - 60px)}
+#slide-3{left:calc(50vw + 20px);width:calc(25vw - 60px);max-width:calc(25vw - 60px)}
+#slide-3 .slide-title{white-space:nowrap}
+#slide-4{left:calc(25% + 40px);max-width:600px}
+.slide-title{font-family:'Italiana',serif;font-size:116px;line-height:1;font-weight:400;letter-spacing:2px;margin-bottom:20px;color:#f1ecff}
+.slide-desc{font-size:16px;line-height:1.7;font-weight:300;color:#d1d5db;letter-spacing:.5px;opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.25,1,.5,1),transform .8s cubic-bezier(.25,1,.5,1);transition-delay:.4s}
+.slide.active .slide-desc,.slide.active .slide-extra{opacity:1;transform:none}
+.slide-extra{display:flex;flex-direction:column;gap:8px;margin-top:18px;opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.25,1,.5,1) .6s,transform .8s cubic-bezier(.25,1,.5,1) .6s}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:10px 0;border:0;border-bottom:1px solid rgba(255,255,255,.15);background:none;color:#fff;font-family:inherit;font-size:12px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:color .3s,padding .3s}
+.row b{font-family:'Italiana',serif;font-size:30px;font-weight:400;color:#8DEBFF;letter-spacing:0}
+.row:hover{color:#00E5FF;padding-left:8px}
+.slide-title .char{display:inline-block;opacity:0;transform:translateY(50px);filter:blur(12px);transition:opacity .8s cubic-bezier(.25,1,.5,1),transform .8s cubic-bezier(.25,1,.5,1),filter .8s cubic-bezier(.25,1,.5,1)}
+.slide-title .w{display:inline-block;white-space:nowrap}
+.slide.active .slide-title .char{opacity:1;transform:none;filter:blur(0)}
+.slide.active{pointer-events:auto}
+.story-dashes{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;gap:12px}
+.story-dash{width:2px;height:40px;background:rgba(255,255,255,.15);border-radius:2px}
+.story-dash-fill{width:100%;height:0%;background:#fff;border-radius:2px}
+.grid-horizontal-line{position:fixed;top:70px;left:0;right:0;height:1px;background:rgba(255,255,255,.12);z-index:5;pointer-events:none}
+.grid-lines{position:fixed;top:0;left:40px;right:40px;width:calc(100% - 80px);height:100vh;display:flex;justify-content:space-between;z-index:5;pointer-events:none}
+.grid-line{position:relative;width:1px;height:100%;background:rgba(255,255,255,.12)}
+.grid-line:nth-child(3){margin-top:70px;height:calc(100vh - 70px)}
+.grid-dot{position:absolute;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35);box-shadow:0 0 4px rgba(255,255,255,.15)}
+dialog{margin:auto;width:min(380px,calc(100vw - 28px));background:#080b10;color:#fff;border:1px solid #00E5FF;border-radius:16px;padding:22px;box-shadow:0 0 60px rgba(0,229,255,.3);z-index:10000}
+dialog[open]{display:flex;flex-direction:column;gap:10px}dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(6px)}
+dialog h3{font-family:'Italiana',serif;font-weight:400;font-size:30px}dialog small{color:#8DEBFF;letter-spacing:2px;text-transform:uppercase;font-size:10px}
+dialog .btn{display:block;text-align:center;padding:13px;border:1px solid #00E5FF;border-radius:10px;color:#fff;background:none;text-decoration:none;font:600 11px Outfit;letter-spacing:2px;cursor:pointer}
+dialog .btn:hover{background:#00E5FF;color:#000}
+@media(max-width:900px){
+ .cinematic-container{padding:0 20px 24px}.header-nav,.grid-lines,.grid-horizontal-line,#slide-2-img{display:none}
+ .slide{left:20px!important;width:calc(100% - 40px)!important;max-width:none!important;bottom:8%}
+ .slide-title{font-size:clamp(44px,14vw,76px)}
+ .slide .slide-title,.slide .slide-desc,.slide .col-1,.slide .col-2{margin-left:0!important;width:auto!important;max-width:none!important;position:static!important}
+ #slide-1 .desc-row{flex-direction:column;gap:12px}.slide-desc{font-size:14px}.slide-title{margin-bottom:12px}
+}
+@media(prefers-reduced-motion:reduce){.slide-title .char,.slide-desc,.slide-extra{transition:none}}
+</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/examples/jsm/loaders/GLTFLoader.js":"https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js","three/examples/jsm/environments/RoomEnvironment.js":"https://unpkg.com/three@0.160.0/examples/jsm/environments/RoomEnvironment.js"}}</script>
 </head>
-<body data-m="cinematic">
-<canvas id="beam" aria-hidden="true"></canvas>
-<div class="frame mono" aria-hidden="true"><span>(VOXX NEXUS) [BUILD BEYOND]</span><span id="sc">SCENE 01 / NEXUS CORE</span></div>
-<nav class="idx mono" id="idx" aria-label="Scenes"></nav>
-<aside class="capt mono" id="capt"></aside>
-<header class="top">
-  <a href="#hero" class="mono brand">❶ VOXX NEXUS</a>
-  <nav class="links mono" aria-label="Main"><a href="#services">SERVICES</a><a href="#workflow">PROCESS</a><a href="#faq">FAQ</a><a href="#contact">CONTACT</a></nav>
-  <button class="hud-btn mono" id="hudBtn" aria-expanded="false" aria-controls="hud">◐ THEME</button>
-</header>
-<aside class="hud" id="hud" aria-label="Theme and interface controls">
-  <div class="mnav mono"><a href="#services">SERVICES</a><a href="#workflow">PROCESS</a><a href="#faq">FAQ</a><a href="#contact">CONTACT</a></div>
-  <b class="mono">THEME</b><div class="swatches" data-group="theme"></div>
-  <b class="mono">MOTION</b><div class="opts" data-group="motion"><button data-v="cinematic">CINEMATIC</button><button data-v="smooth">SMOOTH</button><button data-v="default">DEFAULT</button></div>
-  <b class="mono">FONT</b><div class="opts" data-group="font"><button data-v="Space Grotesk">SPACE</button><button data-v="Inter">INTER</button><button data-v="IBM Plex Mono">PLEX</button><button data-v="JetBrains Mono">JETBRAINS</button></div>
-</aside>
-<main>
-<section id="hero" class="hero">
-  <div class="hero-copy">
-    <p class="mono label">NODE 001 / DIGITAL TECHNOLOGY STUDIO</p>
-    <h1>BUILD<br>BEYOND.</h1>
-    <p class="mono tag">WE BUILD. WE DESIGN. WE AUTOMATE.</p>
-    <p class="lead">A technology studio where software, intelligence, automation and visual systems intersect.</p>
-    <div class="cta"><button class="btn solid" data-open>START A PROJECT ↗</button><a class="btn" href="#services">EXPLORE SYSTEMS ↓</a></div>
+<body>
+<div class="cursor-inner"></div><div class="cursor-outer"></div>
+<div class="cinematic-container">
+  <div class="main-header">
+    <a href="#slide-1" class="brand">❶ VOXX NEXUS</a>
+    <nav class="header-nav" aria-label="Main">
+      <a href="#slide-1" class="nav-link">Studio</a><span class="nav-dot"></span>
+      <a href="#slide-2" class="nav-link">Web &amp; AI</a><span class="nav-dot"></span>
+      <a href="#slide-3" class="nav-link">Pricing</a><span class="nav-dot"></span>
+      <a href="#slide-4" class="nav-link">Contact</a>
+    </nav>
+    <div class="header-actions"><button class="contact-btn" data-open>Contact <span class="btn-circle"></span></button></div>
   </div>
-  <div class="card hero-card" data-tilt>
-    <span class="mono chip">❶ NEXUS CORE</span>
-    <p class="big">Web • AI • APIs<br>Automation • Creative</p>
-    <div class="bars"><i style="--w:92%"></i><i style="--w:68%"></i><i style="--w:81%"></i></div>
-    <div class="mono row2"><span>STATUS <em>ONLINE</em></span><span>NODE <em>001</em></span><span>BUILD <em>2026</em></span></div>
+  <div class="slide" id="slide-1">
+    <h2 class="slide-title">Build <br>Beyond</h2>
+    <div class="desc-row">
+      <p class="slide-desc col-1">VOXX NEXUS is a digital technology studio where software, intelligence, automation and visual systems intersect. We build. We design. We automate.</p>
+      <p class="slide-desc col-2">Websites, AI systems, APIs, bots and creative video, engineered as one connected digital ecosystem.</p>
+    </div>
   </div>
-</section>
-<section id="services"><p class="mono label">01 / SERVICES</p><h2>CHOOSE YOUR SYSTEM.</h2><div class="grid" id="svc"></div><p class="mono note">Starting prices. Final pricing may vary depending on project requirements.</p></section>
-<section id="about"><p class="mono label">02 / CAPABILITIES</p><h2>ONE CONNECTED ECOSYSTEM.</h2><div class="grid" id="cap"></div></section>
-<section id="workflow"><p class="mono label">03 / PROCESS</p><h2>FROM IDEA TO LIVE SYSTEM.</h2>
-<svg class="flow" viewBox="0 0 1000 230" role="img" aria-label="Process: idea, design, build, automate, launch">
-<path id="fp" d="M60 150 C150 40 200 40 270 70 S430 140 500 110 S650 70 720 150 S880 120 940 70" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="2"/>
-<path d="M60 150 C150 40 200 40 270 70 S430 140 500 110 S650 70 720 150 S880 120 940 70" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="8 14" class="dash"/>
-<g class="nodes mono"><g style="--i:0"><circle cx="60" cy="150" r="9"/><text x="60" y="190">IDEA</text></g><g style="--i:1"><circle cx="270" cy="70" r="9"/><text x="270" y="110">DESIGN</text></g><g style="--i:2"><circle cx="500" cy="110" r="9"/><text x="500" y="150">BUILD</text></g><g style="--i:3"><circle cx="720" cy="150" r="9"/><text x="720" y="190">AUTOMATE</text></g><g style="--i:4"><circle cx="940" cy="70" r="9"/><text x="940" y="110">LAUNCH</text></g></g></svg></section>
-<section id="faq"><p class="mono label">04 / FAQ</p><h2>QUESTIONS, ANSWERED.</h2>
-<div class="faqwrap"><div class="acc" id="acc"></div><div class="card qcard" data-tilt aria-hidden="true"><span class="q">?</span></div></div></section>
-<section id="contact"><p class="mono label">05 / OPEN CHANNEL</p><h2>LET'S BUILD WHAT'S NEXT.</h2><div class="grid" id="ct"></div><div><button class="btn solid" data-open>START A PROJECT ↗</button></div></section>
-</main>
-<footer class="mono"><b>❶ VOXX NEXUS</b><span>DIGITAL TECHNOLOGY STUDIO</span><span>WEB • AI • APIs • AUTOMATION • CREATIVE</span>
-<nav><a href="#services">SERVICES</a><a href="#workflow">PROCESS</a><a href="#faq">FAQ</a><a href="#contact">CONTACT</a></nav>
-<nav><a href="https://instagram.com/sisirey.vox" target="_blank" rel="noopener">Instagram</a><a href="https://wa.me/918485800930" target="_blank" rel="noopener">WhatsApp</a><a href="https://t.me/yor_forg3r" target="_blank" rel="noopener">Telegram</a></nav>
-<span>© 2026 VOXX NEXUS — BUILD BEYOND.</span></footer>
-<dialog id="chooser" aria-labelledby="chT"><p class="mono label">OPEN CHANNEL</p><h3 id="chT">CHOOSE YOUR CHANNEL</h3><p class="mono" id="chSvc"></p>
+  <div class="slide-image-mask" id="slide-2-img">
+    <svg viewBox="0 0 200 200" role="img" aria-label="VOXX NEXUS system diagram"><rect width="200" height="200" fill="#080b10"/><g fill="none" stroke="#00E5FF" stroke-opacity=".5"><circle cx="100" cy="100" r="30"/><circle cx="100" cy="100" r="55" stroke="#A855F7"/><circle cx="100" cy="100" r="80" stroke-dasharray="3 5"/><path d="M100 20v160M20 100h160" stroke-opacity=".2"/></g><polygon points="100,78 118,100 100,122 82,100" fill="#00E5FF" fill-opacity=".85"/><text x="100" y="188" fill="#8DEBFF" font-family="Outfit" font-size="8" letter-spacing="3" text-anchor="middle">WEB • AI • APIs</text></svg>
+  </div>
+  <div class="slide" id="slide-2">
+    <h2 class="slide-title">Web <br>and AI</h2>
+    <p class="slide-desc">Interfaces, web apps and AI assistants connected to real workflows. Digital architecture with intent: living products, not pages.</p>
+  </div>
+  <div class="slide" id="slide-3">
+    <h2 class="slide-title">Starting <br>Points</h2>
+    <p class="slide-desc">Starting prices. Final pricing may vary depending on project requirements.</p>
+    <div class="slide-extra">
+      <button class="row" data-svc="Website Design service ($30)">Web Design <b>$30</b></button>
+      <button class="row" data-svc="Backend/API service ($19)">Backend / API <b>$19</b></button>
+      <button class="row" data-svc="Automation Bots service ($15)">Automation Bots <b>$15</b></button>
+      <button class="row" data-svc="Creative Video Editing ($20)">Creative Video Editing <b>$20</b></button>
+    </div>
+  </div>
+  <div class="slide" id="slide-4">
+    <h2 class="slide-title">Open <br>Channel</h2>
+    <p class="slide-desc">Let's build what's next. Pick a channel and say hello.</p>
+    <div class="slide-extra">
+      <a class="row" href="https://instagram.com/sisirey.vox" target="_blank" rel="noopener">Instagram <span>@sisirey.vox ↗</span></a>
+      <a class="row" href="https://t.me/yor_forg3r" target="_blank" rel="noopener">Telegram <span>@yor_forg3r ↗</span></a>
+      <a class="row" href="https://wa.me/918485800930" target="_blank" rel="noopener">WhatsApp <span>+91 8485800930 ↗</span></a>
+    </div>
+  </div>
+</div>
+<div class="grid-horizontal-line"></div>
+<div class="grid-lines" aria-hidden="true">
+  <div class="grid-line"><div class="grid-dot"></div><div class="grid-dot"></div></div>
+  <div class="grid-line"><div class="grid-dot"></div><div class="grid-dot"></div></div>
+  <div class="grid-line"><div class="grid-dot"></div><div class="grid-dot"></div></div>
+  <div class="grid-line"><div class="grid-dot"></div><div class="grid-dot"></div></div>
+  <div class="grid-line"><div class="grid-dot"></div><div class="grid-dot"></div>
+    <div class="story-dashes">
+      <div class="story-dash"><div class="story-dash-fill" id="dash-fill-1"></div></div>
+      <div class="story-dash"><div class="story-dash-fill" id="dash-fill-2"></div></div>
+      <div class="story-dash"><div class="story-dash-fill" id="dash-fill-3"></div></div>
+      <div class="story-dash"><div class="story-dash-fill" id="dash-fill-4"></div></div>
+    </div></div>
+</div>
+<canvas id="webgl" aria-hidden="true"></canvas>
+<dialog id="chooser" aria-labelledby="chT"><small>Open channel</small><h3 id="chT">CHOOSE YOUR CHANNEL</h3><small id="chSvc"></small>
 <a class="btn" id="chIg" target="_blank" rel="noopener">INSTAGRAM</a><a class="btn" id="chTg" target="_blank" rel="noopener">TELEGRAM</a><a class="btn" id="chWa" target="_blank" rel="noopener">WHATSAPP</a><button class="btn" id="chClose">CLOSE</button></dialog>
-<script src="script.js"></script>
+
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+
+const canvas = document.querySelector('#webgl');
+let scene, camera, renderer, gltfModel, modelPivot, mixer;
+const clock = new THREE.Clock();
+let currentScroll = 0, mouseX = 0, mouseY = 0, targetMouseX = 0, targetMouseY = 0;
+let cursorX = innerWidth / 2, cursorY = innerHeight / 2, outerCursorX = cursorX, outerCursorY = cursorY;
+let bgMaterial, sparkParticles;
+const shaderUniforms = { uTime: { value: 0 }, uResolution: { value: new THREE.Vector2(innerWidth, innerHeight) }, uMouse: { value: new THREE.Vector2(0, 0) }, uScroll: { value: 0 } };
+const sparkCount = 450, sparkData = [], sizes = { width: innerWidth, height: innerHeight };
+
+function createBackgroundShader() {
+  const vertexShader = `varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
+  const fragmentShader = `
+    varying vec2 vUv;uniform float uTime;uniform vec2 uResolution;uniform vec2 uMouse;uniform float uScroll;
+    float hash(float n){return fract(sin(n)*43758.5453123);}
+    float noise(in vec3 x){vec3 p=floor(x);vec3 f=fract(x);f=f*f*(3.0-2.0*f);float n=p.x+p.y*57.0+113.0*p.z;
+      return mix(mix(mix(hash(n),hash(n+1.0),f.x),mix(hash(n+57.0),hash(n+58.0),f.x),f.y),mix(mix(hash(n+113.0),hash(n+114.0),f.x),mix(hash(n+170.0),hash(n+171.0),f.x),f.y),f.z);}
+    void main(){
+      vec2 uv=(gl_FragCoord.xy-0.5*uResolution.xy)/uResolution.y;float aspect=uResolution.x/uResolution.y;
+      float time=uTime*0.08;float scroll=uScroll;
+      float angle1=0.6,angle2=-0.7,angle3=1.2;float freq1=2.4,freq2=3.2,freq3=4.0;
+      vec2 warpedUv=uv;float scrollDeform=scroll*5.0;
+      warpedUv.x+=sin(uv.y*2.5+time*0.2+scrollDeform)*0.35;
+      warpedUv.y+=cos(uv.x*2.5-time*0.15-scrollDeform*0.8)*0.35;
+      warpedUv.x+=sin(uv.y*1.2-time*0.1-scrollDeform*1.5)*0.25;
+      warpedUv.y+=cos(uv.x*1.2+time*0.18+scrollDeform*1.2)*0.25;
+      vec2 scrollDrift=vec2(scroll*0.04,-scroll*0.02);vec2 mouseShift=vec2(uMouse.x*aspect*0.05,uMouse.y*0.05);
+      warpedUv+=scrollDrift+mouseShift;
+      vec2 dir1=vec2(cos(angle1),sin(angle1));vec2 dir2=vec2(cos(angle2),sin(angle2));vec2 dir3=vec2(cos(angle3),sin(angle3));
+      float w1=sin(dot(warpedUv,dir1)*freq1+time*1.0);
+      float w2=cos(dot(warpedUv,dir2)*freq2-time*1.4+w1*0.4);
+      float w3=sin(dot(warpedUv,dir3)*freq3+time*1.8+w2*0.5);
+      float waveField=w1*0.50+w2*0.35+w3*0.15;
+      float wideSheen=pow(max(0.0,1.0-abs(waveField-0.1)),2.5);
+      float crispSpecular=pow(max(0.0,1.0-abs(waveField-0.15)),8.0);
+      float crest=wideSheen*0.5+crispSpecular*0.9;
+      vec3 c0_shadow=vec3(0.0005,0.0004,0.0010);vec3 c0_wave1=vec3(0.040,0.020,0.085);vec3 c0_wave2=vec3(0.022,0.010,0.050);vec3 c0_crest=vec3(0.30,0.22,0.55);
+      vec3 c1_shadow=vec3(0.0004,0.0006,0.0012);vec3 c1_wave1=vec3(0.010,0.045,0.065);vec3 c1_wave2=vec3(0.006,0.028,0.045);vec3 c1_crest=vec3(0.15,0.55,0.65);
+      float t=smoothstep(0.0,1.0,scroll);
+      vec3 colShadow=mix(c0_shadow,c1_shadow,t);vec3 colWave1=mix(c0_wave1,c1_wave1,t);vec3 colWave2=mix(c0_wave2,c1_wave2,t);vec3 colCrest=mix(c0_crest,c1_crest,t);
+      vec3 color=colShadow;
+      color=mix(color,colWave2,smoothstep(-0.6,0.2,waveField));
+      color=mix(color,colWave1,smoothstep(0.0,0.8,waveField));
+      color+=colCrest*crest*1.4;
+      float vignette=1.0-dot(uv,uv)*0.12;color*=vignette;
+      gl_FragColor=vec4(color,1.0);}`;
+  bgMaterial = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms: shaderUniforms, depthWrite: false, depthTest: false });
+  const bgMesh = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), bgMaterial);
+  bgMesh.position.set(0, 0, -8); bgMesh.renderOrder = -10; camera.add(bgMesh);
+}
+
+function createSparkTexture() {
+  const c = document.createElement('canvas'); c.width = 16; c.height = 16;
+  const x = c.getContext('2d'), g = x.createRadialGradient(8, 8, 0, 8, 8, 8);
+  g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.25, 'rgba(255,255,255,.85)'); g.addColorStop(.6, 'rgba(255,255,255,.3)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = g; x.fillRect(0, 0, 16, 16); return new THREE.CanvasTexture(c);
+}
+function createSparks() {
+  const geometry = new THREE.BufferGeometry(), positions = new Float32Array(sparkCount * 3), colors = new Float32Array(sparkCount * 3);
+  for (let i = 0; i < sparkCount; i++) {
+    positions[i*3] = (Math.random() - .5) * 6.5; positions[i*3+1] = (Math.random() - .5) * 5 - .5; positions[i*3+2] = (Math.random() - .5) * 6.5;
+    if (Math.random() < .6) { colors[i*3] = .0 + Math.random() * .15; colors[i*3+1] = .75 + Math.random() * .2; colors[i*3+2] = 1; }       // electric cyan
+    else { colors[i*3] = .5 + Math.random() * .2; colors[i*3+1] = .25 + Math.random() * .15; colors[i*3+2] = 1; }                                // ultraviolet
+    sparkData.push({ speedX: (Math.random() - .5) * .4, speedY: .15 + Math.random() * .3, speedZ: (Math.random() - .5) * .4, swaySpeed: .5 + Math.random() * 1.5, swayRadius: .05 + Math.random() * .15, phase: Math.random() * 6.283 });
+  }
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3)); geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  sparkParticles = new THREE.Points(geometry, new THREE.PointsMaterial({ size: .025, vertexColors: true, transparent: true, opacity: .85, blending: THREE.AdditiveBlending, depthWrite: false, map: createSparkTexture() }));
+  scene.add(sparkParticles);
+}
+
+/* Procedural NEXUS CORE (used when ./assets/nexus-core.glb is not present) */
+function buildCore() {
+  const g = new THREE.Group();
+  const dark = new THREE.MeshStandardMaterial({ color: 0x15181d, metalness: .92, roughness: .42, envMapIntensity: .6 });
+  const chrome = new THREE.MeshStandardMaterial({ color: 0xc8d0da, metalness: 1, roughness: .22, envMapIntensity: .8 });
+  const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(.7, 1), new THREE.MeshPhysicalMaterial({ color: 0x00e5ff, emissive: 0x0090b0, emissiveIntensity: .8, roughness: .1, transparent: true, opacity: .9, clearcoat: 1 }));
+  const shell = new THREE.Mesh(new THREE.IcosahedronGeometry(1.05, 1), new THREE.MeshPhysicalMaterial({ color: 0x88ccff, roughness: .05, transparent: true, opacity: .15, side: THREE.DoubleSide }));
+  const holo = new THREE.Mesh(new THREE.IcosahedronGeometry(1.25, 2), new THREE.MeshBasicMaterial({ color: 0x00e5ff, wireframe: true, transparent: true, opacity: .12 }));
+  g.add(crystal, shell, holo);
+  [[1.5, .035, 0, chrome], [1.9, .06, 1.1, dark], [1.15, .03, 2, chrome]].forEach(([r, t, tilt, m], i) => {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(r, t, 12, 120), m); ring.rotation.set(tilt, i * .7, 0); g.add(ring);
+    const node = new THREE.Mesh(new THREE.SphereGeometry(.05, 8, 8), new THREE.MeshBasicMaterial({ color: i % 2 ? 0xa855f7 : 0x00e5ff })); node.position.x = r; ring.add(node);
+  });
+  for (let i = 0; i < 22; i++) {
+    const f = new THREE.Mesh(new THREE.BoxGeometry(.08 + Math.random() * .12, .04, .12 + Math.random() * .14), i % 3 ? dark : chrome), a = Math.random() * 6.283, r = 1.6 + Math.random() * 1.1;
+    f.position.set(Math.cos(a) * r, (Math.random() - .5) * 1.6, Math.sin(a) * r); f.rotation.set(Math.random() * 3, Math.random() * 3, 0); g.add(f);
+  }
+  return g;
+}
+function placeModel(obj, anims) {
+  gltfModel = obj; modelPivot = new THREE.Group(); scene.add(modelPivot); modelPivot.add(gltfModel);
+  gltfModel.traverse(c => { if (c.isMesh) { c.castShadow = true; c.receiveShadow = true; } });
+  if (anims && anims.length) { mixer = new THREE.AnimationMixer(gltfModel); anims.forEach(cl => mixer.clipAction(cl).play()); }
+  const sz = new THREE.Box3().setFromObject(gltfModel).getSize(new THREE.Vector3()), m = Math.max(sz.x, sz.y, sz.z);
+  gltfModel.scale.setScalar(3.5 / (m > .0001 ? m : 1)); gltfModel.updateMatrixWorld(true);
+  gltfModel.position.sub(new THREE.Box3().setFromObject(gltfModel).getCenter(new THREE.Vector3()));
+  modelPivot.position.y = -0.4;
+}
+function loadModel() {
+  new GLTFLoader().load('./assets/nexus-core.glb', gltf => placeModel(gltf.scene, gltf.animations), undefined, () => placeModel(buildCore(), null));
+}
+
+function onWindowResize() {
+  sizes.width = innerWidth; sizes.height = innerHeight;
+  if (!renderer) return;
+  camera.aspect = sizes.width / sizes.height; camera.updateProjectionMatrix();
+  renderer.setSize(sizes.width, sizes.height); renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  shaderUniforms.uResolution.value.set(sizes.width, sizes.height);
+}
+
+function splitTitlesIntoChars() {
+  document.querySelectorAll('.slide-title').forEach(title => {
+    let html = '', n = 0;
+    title.innerHTML.split(/(<br\s*\/?>)/i).forEach(part => {
+      if (part.toLowerCase().startsWith('<br')) { html += part; return; }
+      part.split(' ').forEach((word, wi) => {
+        if (!word) return;
+        html += (wi ? ' ' : '') + '<span class="w" aria-hidden="true">' + [...word].map(c => `<span class="char" style="transition-delay:${(n++) * .035}s">${c}</span>`).join('') + '</span>';
+      });
+    });
+    title.setAttribute('aria-label', title.textContent.replace(/\s+/g, ' ').trim()); title.innerHTML = html;
+  });
+}
+
+addEventListener('mousemove', e => {
+  cursorX = e.clientX; cursorY = e.clientY;
+  const ci = document.querySelector('.cursor-inner'); if (ci) { ci.style.left = cursorX + 'px'; ci.style.top = cursorY + 'px'; }
+  targetMouseX = e.clientX / innerWidth * 2 - 1; targetMouseY = e.clientY / innerHeight * 2 - 1;
+});
+document.addEventListener('mouseover', e => { const o = document.querySelector('.cursor-outer'); if (o) o.classList.toggle('big', !!e.target.closest('a,button')); });
+addEventListener('resize', onWindowResize);
+
+function updateGridDots(scroll) {
+  document.querySelectorAll('.grid-dot').forEach((dot, i) => {
+    const startY = (i * 17) % 80 + 10; let speed = 90 + (i * 55) % 180; if (i % 2 === 0) speed = -speed;
+    let y = startY + scroll * speed; y = ((y % 100) + 100) % 100; dot.style.top = `${y}%`;
+  });
+}
+function updateSlides(scroll) {
+  const s = [1, 2, 3, 4].map(i => document.getElementById('slide-' + i));
+  for (let i = 1; i <= 4; i++) {
+    const fill = document.getElementById('dash-fill-' + i);
+    if (fill) { let p = (scroll - (i - 1) * .25) / .25; fill.style.height = `${Math.max(0, Math.min(1, p)) * 100}%`; }
+  }
+  const on = (v, a, b) => v >= a && v <= b;
+  s[0].classList.toggle('active', on(scroll, -.10, .12));
+  const a2 = on(scroll, .28, .40); s[1].classList.toggle('active', a2); document.getElementById('slide-2-img').classList.toggle('active', a2);
+  s[2].classList.toggle('active', on(scroll, .56, .68));
+  s[3].classList.toggle('active', on(scroll, .84, 1.05));
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = clock.getDelta(); if (mixer) mixer.update(dt);
+  const maxScroll = document.documentElement.scrollHeight - innerHeight, scrollTop = window.scrollY || 0;
+  const targetScroll = maxScroll > 0 ? scrollTop / maxScroll : 0;
+  currentScroll += (targetScroll - currentScroll) * .025;
+  mouseX += (targetMouseX - mouseX) * .05; mouseY += (targetMouseY - mouseY) * .05;
+  outerCursorX += (cursorX - outerCursorX) * .2; outerCursorY += (cursorY - outerCursorY) * .2;
+  const co = document.querySelector('.cursor-outer'); if (co) { co.style.left = outerCursorX + 'px'; co.style.top = outerCursorY + 'px'; }
+  if (renderer) {
+    if (modelPivot) { modelPivot.rotation.y = mouseX * .25; modelPivot.rotation.x = mouseY * .15; }
+    if (sparkParticles) {
+      const pos = sparkParticles.geometry.attributes.position.array, time = clock.getElapsedTime();
+      const sv = Math.abs(targetScroll - currentScroll), sm = 1 + sv * 9, tu = sv * .8;
+      for (let i = 0; i < sparkCount; i++) {
+        const k = i * 3, d = sparkData[i];
+        pos[k] += d.speedX * dt * sm; pos[k+1] += d.speedY * dt * sm; pos[k+2] += d.speedZ * dt * sm;
+        const sw = d.swayRadius * (1 + tu * 4);
+        pos[k] += Math.sin(time * d.swaySpeed + d.phase) * sw * dt; pos[k+2] += Math.cos(time * d.swaySpeed + d.phase) * sw * dt;
+        if (pos[k+1] > 3 || Math.abs(pos[k]) > 3.5 || Math.abs(pos[k+2]) > 3.5) { pos[k+1] = -2.5; pos[k] = (Math.random() - .5) * 3; pos[k+2] = (Math.random() - .5) * 3; }
+      }
+      sparkParticles.geometry.attributes.position.needsUpdate = true;
+    }
+    const phi = currentScroll * Math.PI * 2, y = .35 + Math.sin(currentScroll * Math.PI) * .8, radius = 4.2 - Math.sin(currentScroll * Math.PI) * .6;
+    const ease = (Math.cos(Math.min(1, currentScroll / .28) * Math.PI) + 1) * .5, off = innerWidth > 900 ? -.9 * ease : 0;
+    camera.position.lerp(new THREE.Vector3(radius * Math.sin(phi), y, radius * Math.cos(phi)), .025);
+    camera.lookAt(new THREE.Vector3(off, -.15, 0));
+    shaderUniforms.uTime.value = clock.getElapsedTime(); shaderUniforms.uMouse.value.set(mouseX, -mouseY); shaderUniforms.uScroll.value = currentScroll;
+    renderer.render(scene, camera);
+  }
+  updateSlides(currentScroll); updateGridDots(currentScroll);
+}
+
+function setupNavigation() {
+  const T = [0, .34, .62, .94];
+  document.querySelectorAll('.nav-link').forEach((l, i) => l.addEventListener('click', e => { e.preventDefault(); scrollTo({ top: (document.documentElement.scrollHeight - innerHeight) * T[i], behavior: 'smooth' }); }));
+  document.querySelector('.brand').addEventListener('click', e => { e.preventDefault(); scrollTo({ top: 0, behavior: 'smooth' }); });
+  const dlg = document.getElementById('chooser'), q = id => document.getElementById(id);
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-open],[data-svc]'); if (!b) return;
+    const s = b.dataset.svc, m = s ? `Hi VOXX NEXUS, I'm interested in the ${s}.` : `Hi VOXX NEXUS, I'd like to start a project.`;
+    q('chSvc').textContent = s || 'New project'; q('chIg').href = 'https://instagram.com/sisirey.vox'; q('chTg').href = 'https://t.me/yor_forg3r';
+    q('chWa').href = 'https://wa.me/918485800930?text=' + encodeURIComponent(m); dlg.showModal();
+  });
+  q('chClose').onclick = () => dlg.close(); dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+}
+
+splitTitlesIntoChars();
+try {
+  scene = new THREE.Scene(); scene.background = new THREE.Color('#000000'); scene.fog = new THREE.FogExp2('#000000', .01);
+  camera = new THREE.PerspectiveCamera(50, sizes.width / sizes.height, .1, 100); camera.position.set(0, .2, 3); scene.add(camera);
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+  renderer.setSize(sizes.width, sizes.height); renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 2.2;
+  createBackgroundShader();
+  scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), .04).texture;
+  scene.add(new THREE.AmbientLight('#ffffff', .1));
+  const key = new THREE.SpotLight('#ffffff', 18); key.position.set(4, 6, 3); key.angle = Math.PI / 4; key.penumbra = .9; key.castShadow = true;
+  key.shadow.mapSize.set(2048, 2048); key.shadow.camera.near = 1; key.shadow.camera.far = 15; key.shadow.bias = -.001; scene.add(key);
+  const rim = new THREE.DirectionalLight('#e3f2ff', 10); rim.position.set(-5, 3, -4); scene.add(rim);
+  const fill = new THREE.DirectionalLight('#fff3e6', .8); fill.position.set(-2, -4, 2); scene.add(fill);
+  createSparks(); loadModel();
+} catch (err) { console.warn('WebGL unavailable', err); renderer = null; document.body.classList.add('nogl'); canvas.style.display = 'none'; }
+onWindowResize(); setupNavigation(); animate();
+</script>
 </body>
 </html>
