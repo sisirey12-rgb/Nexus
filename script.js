@@ -32,11 +32,14 @@ $('#acc').innerHTML=faq.map(f=>`<details class="rv"><summary>${f[0]}</summary><p
 const ic={i:'<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8"/>',t:'<path d="M21 4 3 11l6 2 2 6 3-4 5 3L21 4z"/>',w:'<path d="M3 21l1.6-4.6A9 9 0 1 1 8 19.6z"/><path d="M9 8.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-.8.8c-.8-.4-1.6-1.2-2-2l.8-.8-1-2z"/>'};
 $('#ct').innerHTML=[['INSTAGRAM','@sisirey.vox',IG,'i'],['TELEGRAM','@yor_forg3r',TG,'t'],['WHATSAPP','+91 8485800930',WA,'w']].map(c=>`<a class="card contact rv" data-tilt href="${c[2]}" target="_blank" rel="noopener" aria-label="Open ${c[0]} ${c[1]}"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">${ic[c[3]]}</svg><h3 class="mono">${c[0]}</h3><p class="handle">${c[1]}</p><span class="go mono">OPEN ${c[0]} ↗</span></a>`).join('');
 $$('.hero-copy>*,.hero-card,h2,.label,.note,.flow').forEach(e=>e.classList.add('rv'));
+/* per-letter blur-up titles */
+$$('h1,h2').forEach(el=>{el.classList.remove('rv');el.classList.add('ttl');el.setAttribute('aria-label',el.textContent.replace(/\s+/g,' ').trim());let n=0;
+  el.innerHTML=el.innerHTML.split(/<br\s*\/?>/i).map(l=>l.trim().split(/\s+/).map(w=>`<span class="w" aria-hidden="true">${[...w].map(c=>`<span class="char" style="transition-delay:${(n++)*.035}s">${c}</span>`).join('')}</span>`).join(' ')).join('<br>')});
 
 /* reveal with stagger */
 $$('section').forEach(s=>$$('.rv',s).forEach((e,i)=>e.style.setProperty('--i',i)));
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
-$$('.rv').forEach(e=>io.observe(e));
+$$('.rv,.ttl').forEach(e=>io.observe(e));
 
 /* chooser */
 const dlg=$('#chooser');
@@ -83,11 +86,25 @@ const SHORT=['NEXUS','SYSTEMS','CAPABILITIES','PROCESS','SIGNAL','CHANNEL'],CAPS
 $('#idx').innerHTML=SEC.map((id,i)=>`<a href="#${id}">${SHORT[i]}</a>`).join('');
 function updateUI(s){$('#sc').textContent=`[ SCENE 0${s+1} / ${NAMES[s]} ]`;$('#capt').innerHTML=`<b>SEC.00${s+1} — ${NAMES[s]}</b><p>${CAPS[s]}</p><button data-open>START A PROJECT ↗</button>`;$$('#idx a').forEach((a,i)=>a.classList.toggle('on',i===s))}
 updateUI(0);
+/* editorial grid: 5 lines, drifting dots, story progress, double-ring cursor */
+const gl=document.createElement('div');gl.className='grid-lines';gl.setAttribute('aria-hidden','true');
+gl.innerHTML=Array.from({length:5},(_,k)=>`<div class="grid-line">${k===4?'<div class="story-dashes">'+'<div class="story-dash"><i class="story-fill"></i></div>'.repeat(6)+'</div>':''}<i class="grid-dot"></i><i class="grid-dot"></i></div>`).join('');
+const hl=document.createElement('div');hl.className='grid-h';hl.setAttribute('aria-hidden','true');document.body.prepend(hl,gl);
+const gdots=$$('.grid-dot'),gfill=$$('.story-fill');let curTick=()=>{};
+if(matchMedia('(hover:hover) and (pointer:fine)').matches){document.documentElement.classList.add('cc');
+  const ci=document.createElement('div'),co=document.createElement('div');ci.className='cur-in';co.className='cur-out';document.body.prepend(ci,co);
+  let ox=innerWidth/2,oy=innerHeight/2,px=ox,py=oy;
+  addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY;ci.style.left=px+'px';ci.style.top=py+'px'},{passive:true});
+  document.addEventListener('mouseover',e=>co.classList.toggle('big',!!e.target.closest('a,button,[data-tilt],summary')));
+  curTick=()=>{ox+=(px-ox)*.2;oy+=(py-oy)*.2;co.style.left=ox+'px';co.style.top=oy+'px'}}
+function gridFx(){const s=sm/5;
+  gdots.forEach((d,i)=>{let sp=90+(i*55)%180;if(i%2===0)sp=-sp;d.style.top=((((i*17)%80+10+s*sp)%100)+100)%100+'%'});
+  gfill.forEach((f,i)=>f.style.height=Math.max(0,Math.min(1,s*6-i))*100+'%');curTick()}
 function frame(now){requestAnimationFrame(frame);if(!vis)return;
   if(++fc%90===0)calc();
   const still=reduceMQ.matches,sp=SPEED[st.motion],t=now/1000*sp;
   vs+=((scrollY-lastY)-vs)*.12;lastY=scrollY;const punch=Math.min(Math.abs(vs)/50,1);
-  cardFx(punch,still);
+  cardFx(punch,still);gridFx();
   const y=scrollY+innerHeight*.5;let i=0;while(i<5&&y>=tops[i+1])i++;
   const f=i>=5?0:(y-tops[i])/Math.max(1,tops[i+1]-tops[i]),f2=Math.min(1,Math.max(0,(f-.2)/.6));
   sm+=((i+f2)-sm)*K[st.motion];
